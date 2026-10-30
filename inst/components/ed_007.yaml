@@ -1,6 +1,6 @@
-id: ed_minutes_non_admitted
+id: ed_007
 title: Minutes in ED, non-admitted attendances
 description: Minutes from arrival to departure for ED attendances that did not end in admission, dated by arrival. Attendances with no recorded departure contribute nothing.
-source: derived.ed_attendances
+source: derived.ed_001
 aggregate: sum
 unit: minutes

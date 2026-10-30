@@ -9,9 +9,12 @@ component_fields <- c("id", "title", "description", "source", "aggregate", "unit
 
 # Field names a metric YAML may carry.
 metric_fields <- c(
-  "id", "title", "description", "category", "type", "numerator", "denominator",
+  "id", "title", "description", "type", "numerator", "denominator",
   "multiplier", "divisor", "unit", "grain", "improvement_direction", "target", "rebase"
 )
+
+# Every id is a domain code, an underscore and a three-digit number.
+id_pattern <- "^([a-z]+)_([0-9]{3})$"
 
 metric_types <- c("count", "percentage", "rate", "mean")
 component_aggregates <- c("count", "sum")

@@ -1,6 +1,0 @@
-id: rtt_incomplete_within_18w
-title: RTT incomplete pathways waiting 18 weeks or less at month end
-description: A snapshot component. The open pathways of rtt_incomplete that had waited 18 weeks (126 days) or less at the month end.
-source: derived.rtt_pathways
-aggregate: count
-unit: pathways

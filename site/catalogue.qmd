@@ -1,0 +1,72 @@
+---
+title: "Index"
+---
+
+```{r setup}
+library(fhperf)
+built <- readRDS("_data/metrics.rds")
+cat <- built$catalogue
+mt <- metric_table(cat)
+ct <- component_table(cat)
+link <- function(id) sprintf("[`%s`](metrics/%s.qmd)", id, id)
+code <- function(x) ifelse(is.na(x) | x == "", "", sprintf("`%s`", x))
+comp_label <- function(ids, self_id = NULL) {
+  out <- vapply(ids, function(id) if (is.na(id)) "" else sprintf("`%s` %s", id, get_component(cat, id)$title), character(1))
+  if (!is.null(self_id)) out[!is.na(ids) & ids == self_id] <- paste(out[!is.na(ids) & ids == self_id], "(itself)")
+  unname(out)
+}
+```
+
+Every metric and component has an id of the form `<domain>_<nnn>`. The
+domain names the subject matter expert group that owns the definition, and
+metrics and components share one numbering within a domain. A count is one
+id: its numerator is the component with the same id. A percentage, rate or
+mean is three: the metric, its numerator and its denominator. Denominators
+are reused wherever the population is the same.
+
+```{r domains}
+#| results: asis
+for (code_ in domain_codes(cat)) {
+  d <- cat$domains[[code_]]
+  m <- mt[mt$domain == code_, ]
+  c_ <- ct[ct$domain == code_, ]
+  cat("\n## ", d$title, " (`", code_, "`)\n\n", sep = "")
+  if (!is.null(d$description)) cat(d$description, "\n\n")
+  cat("### Metrics\n\n")
+  if (nrow(m) == 0) cat("None yet.\n\n") else {
+    tab <- data.frame(
+      Id = link(m$id), Metric = m$title, Type = m$type,
+      Numerator = mapply(function(n, id) comp_label(n, id), m$numerator, m$id),
+      Denominator = comp_label(m$denominator),
+      Grain = m$grain, Direction = m$improvement_direction,
+      Target = ifelse(is.na(m$target), "", mapply(function(v, id) format_value(v, get_metric(cat, id)), m$target, m$id)),
+      check.names = FALSE
+    )
+    print(knitr::kable(tab, row.names = FALSE))
+    cat("\n")
+  }
+  cat("### Components\n\n")
+  if (nrow(c_) == 0) cat("None yet.\n\n") else {
+    tab <- data.frame(
+      Id = code(c_$id), Component = c_$title, Aggregate = c_$aggregate,
+      Unit = ifelse(is.na(c_$unit), "", c_$unit), Source = code(c_$source),
+      `Used by` = gsub("\\b([a-z]+_[0-9]{3})\\b", "`\\1`", c_$used_by),
+      check.names = FALSE
+    )
+    print(knitr::kable(tab, row.names = FALSE))
+    cat("\n")
+  }
+}
+```
+
+## Every id
+
+```{r all}
+all <- rbind(
+  data.frame(Id = mt$id, Kind = "metric", Title = mt$title, Domain = mt$domain_title, stringsAsFactors = FALSE),
+  data.frame(Id = ct$id, Kind = "component", Title = ct$title, Domain = ct$domain_title, stringsAsFactors = FALSE)
+)
+all <- all[order(all$Id, all$Kind), ]
+all$Id <- sprintf("`%s`", all$Id)
+knitr::kable(all, row.names = FALSE)
+```

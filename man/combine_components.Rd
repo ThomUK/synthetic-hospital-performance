@@ -24,7 +24,7 @@ denominator is zero has value \code{NA}.
 }
 \examples{
 cat <- read_catalogue()
-m <- get_metric(cat, "ed_4h_performance")
+m <- get_metric(cat, "ed_003")
 num <- data.frame(period = as.Date(c("2024-01-01", "2024-02-01")), value = c(90, 80))
 den <- data.frame(period = as.Date(c("2024-01-01", "2024-02-01")), value = c(100, 100))
 combine_components(num, den, m)

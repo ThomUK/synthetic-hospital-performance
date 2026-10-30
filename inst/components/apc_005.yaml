@@ -1,4 +1,4 @@
-id: inpatient_discharges_alive
+id: apc_005
 title: Inpatient discharges, patient alive
 description: Closed, non-day-case spells where the patient did not die in hospital, dated by discharge. The population at risk of readmission.
 source: derived.spells

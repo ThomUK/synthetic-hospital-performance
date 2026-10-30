@@ -1,0 +1,18 @@
+# The domains that prefix every metric and component id. Each domain is
+# expected to be curated by one subject matter expert group, so a new id
+# takes the prefix of the group that will own it and the next free number.
+- code: ed
+  title: Urgent and emergency care
+  description: Emergency department attendances and the time patients spend in the department.
+- code: apc
+  title: Admitted patient care
+  description: Inpatient spells, admissions, discharges, length of stay and readmissions.
+- code: op
+  title: Outpatients
+  description: Outpatient appointments and attendance.
+- code: rtt
+  title: Planned care
+  description: Referral-to-treatment pathways and waiting times.
+- code: diag
+  title: Diagnostics
+  description: Imaging and endoscopy activity and turnaround.

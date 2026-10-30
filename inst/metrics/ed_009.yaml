@@ -1,10 +1,9 @@
-id: ed_los_non_admitted_hours
+id: ed_009
 title: Mean time in ED, non-admitted patients
 description: Mean hours from arrival to departure for attendances that did not end in admission. Total minutes divided by attendances, then by 60.
-category: Urgent and emergency care
 type: mean
-numerator: ed_minutes_non_admitted
-denominator: ed_attendances_non_admitted
+numerator: ed_007
+denominator: ed_005
 divisor: 60
 unit: hours
 grain: month

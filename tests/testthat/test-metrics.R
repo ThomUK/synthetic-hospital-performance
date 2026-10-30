@@ -44,26 +44,26 @@ test_that("build_metric shares components through the cache", {
   con <- DBI::dbConnect(duckdb::duckdb())
   withr::defer(DBI::dbDisconnect(con, shutdown = TRUE))
   DBI::dbExecute(con, "CREATE TABLE t AS SELECT * FROM (VALUES (DATE '2024-01-05', TRUE), (DATE '2024-01-20', FALSE), (DATE '2024-02-02', TRUE)) v(d, hit)")
-  all <- count_component("all", "SELECT d AS event_date FROM t")
-  hits <- count_component("hits", "SELECT d AS event_date FROM t WHERE hit")
+  all <- count_component("t_001", "SELECT d AS event_date FROM t")
+  hits <- count_component("t_002", "SELECT d AS event_date FROM t WHERE hit")
   dir <- write_catalogue(
     metrics = list(
-      toy_metric("n", "count", "all"),
-      toy_metric("pct", "percentage", "hits", "all", target = 50, improvement_direction = "increase"),
-      toy_metric("per_k", "rate", "hits", "all")
+      list(id = "t_001", title = "all, counted", type = "count"),
+      toy_metric("t_003", "percentage", "t_002", "t_001", target = 50, improvement_direction = "increase"),
+      toy_metric("t_004", "rate", "t_002", "t_001")
     ),
     components = list(all$component, hits$component), sql = c(all$sql, hits$sql)
   )
   cat <- read_catalogue(dir)
   w <- as.Date(c("2024-01-01", "2024-03-31"))
   res <- build_metrics(con, cat, window = w)
-  expect_named(res, c("n", "pct", "per_k"))
-  expect_equal(res$n$value, c(2, 1, 0))
-  expect_equal(res$pct$value, c(50, 100, NA))
-  expect_equal(res$per_k$value, c(500, 1000, NA))
+  expect_named(res, c("t_001", "t_003", "t_004"))
+  expect_equal(res$t_001$value, c(2, 1, 0))
+  expect_equal(res$t_003$value, c(50, 100, NA))
+  expect_equal(res$t_004$value, c(500, 1000, NA))
   # a cache passed explicitly is filled with one entry per component
   cache <- new.env()
-  build_metric(con, cat, "pct", window = w, cache = cache)
-  build_metric(con, cat, "n", window = w, cache = cache)
+  build_metric(con, cat, "t_003", window = w, cache = cache)
+  build_metric(con, cat, "t_001", window = w, cache = cache)
   expect_equal(length(ls(cache)), 2)
 })

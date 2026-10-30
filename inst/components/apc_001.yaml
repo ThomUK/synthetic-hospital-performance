@@ -1,4 +1,4 @@
-id: emergency_admissions
+id: apc_001
 title: Emergency admissions
 description: Inpatient spells with an emergency admission method, dated by admission.
 source: derived.spells

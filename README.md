@@ -14,15 +14,21 @@ chart. Nothing in the data is real.
 - A **metric** is a YAML file naming a numerator, a denominator unless it is
   a count, a type (`count`, `percentage`, `rate`, `mean`), the period grain,
   the improvement direction and optionally a target and rebase dates.
+- Every id is `<domain>_<nnn>`. The domain (`ed`, `apc`, `op`, `rtt`,
+  `diag`, listed in `inst/domains.yaml`) names the subject matter expert
+  group that owns the definition, and metrics and components share one
+  numbering within it. A count is one id, because a count metric's numerator
+  is the component with the same id. A rate is three.
 - The package reads the events, aggregates them into complete periods,
   combines numerator and denominator, and hands the series to
   `NHSRplotthedots::ptd_spc()`.
 
 ```
 inst/
-  metrics/      one YAML per metric          ed_4h_performance.yaml
-  components/   one YAML per component       ed_within_4h.yaml, ed_attendances.yaml
-  sql/          one query per component      ed_within_4h.sql, ed_attendances.sql
+  domains.yaml  the domain codes and their owners
+  metrics/      one YAML per metric          ed_003.yaml   (four-hour performance = ed_002 / ed_001)
+  components/   one YAML per component       ed_002.yaml, ed_001.yaml
+  sql/          one query per component      ed_002.sql,  ed_001.sql
 ```
 
 The shipped catalogue has ten metrics: ED attendances, ED four-hour
@@ -41,7 +47,8 @@ library(fhperf)
 
 cat <- read_catalogue()
 con <- perf_connect("sample")          # downloads ~130 MB once, opens DuckDB
-x <- build_metric(con, cat, "ed_4h_performance")
+metric_table(cat)                      # every metric with its numerator and denominator ids
+x <- build_metric(con, cat, "ed_003")  # ED four-hour performance
 plot_metric(x)
 metric_summary(x)
 all <- build_metrics(con, cat)         # every metric; shared components read once
@@ -53,18 +60,23 @@ works in place of `perf_connect()`, so a pipeline can bring its own.
 
 ### Adding a metric
 
-1. Write the component SQL in `inst/sql/<id>.sql`, returning `event_date`
-   and, for a sum, `value`. Reuse an existing denominator if one fits.
-2. Describe it in `inst/components/<id>.yaml`.
-3. Add `inst/metrics/<id>.yaml`.
+1. Pick the owning domain and take its next free number for each new id.
+   Reuse an existing denominator if one fits; `component_table()` shows
+   what each component is already used by.
+2. Write the component SQL in `inst/sql/<id>.sql`, returning `event_date`
+   and, for a sum, `value`, and describe it in `inst/components/<id>.yaml`.
+3. Add `inst/metrics/<id>.yaml`. For a count, give the metric the same id
+   as its component and leave `numerator` out.
 4. `read_catalogue()` validates the lot and names every problem; the tests
    run every query against the sample.
 
 ## The site
 
-`site/` is a Quarto website. Its pre-render script `_build.R` builds every
-metric, saves the results to `site/_data/` and writes one page per metric
-from `site/_templates/metric.qmd`; the pages only read the saved data.
+`site/` is a Quarto website: a home page of latest values and charts, an
+index of every metric and component with their ids, a how-it-works page and
+one page per metric. Its pre-render script `_build.R` builds every metric,
+saves the results to `site/_data/` and writes the metric pages from
+`site/_templates/metric.qmd`; the pages only read the saved data.
 
 ```sh
 cd site && quarto render        # needs fhperf installed and the sample cached

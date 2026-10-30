@@ -13,9 +13,10 @@ validate_catalogue(cat)
 \code{TRUE}, invisibly, or an error listing every problem.
 }
 \description{
-Every problem found is reported in a single error: unknown fields,
-missing required fields, illegal values, references to components that
-do not exist, missing SQL files, a denominator on a count metric or none
-on any other, and an id used by more than one metric or component (ids
-share one namespace, so a rate and its numerator can never be confused).
+Every problem found is reported in a single error: ids that are not
+\verb{<domain>_<nnn>} or whose domain is not in \code{domains.yaml}, unknown
+fields, missing required fields, illegal values, references to
+components that do not exist, missing SQL files, a denominator on a count
+metric or none on any other, and an id used by both a metric and a
+component unless the metric is a count whose numerator is itself.
 }

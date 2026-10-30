@@ -5,6 +5,22 @@ title: "How it works"
 The site is rendered from the [`fhperf`](https://github.com/ThomUK/synthetic-hospital-performance)
 R package. Everything a metric needs is in three folders under `inst/`.
 
+## Ids and domains
+
+Every id is `<domain>_<nnn>`, for example `ed_003`. The domain codes are
+listed in `inst/domains.yaml`, each naming the subject matter expert group
+expected to own its definitions: `ed`, `apc`, `op`, `rtt` and `diag` so
+far. Metrics and components share one numbering within a domain, and a new
+id is simply the next free number under the owning domain. The validator
+rejects any id whose domain is not in the list.
+
+A count is one id. Its metric file omits `numerator`, and the component
+with the same id supplies the events. Anything with a denominator is three
+ids: the metric, its numerator and its denominator, each defined once and
+reusable, so `ed_003` (four-hour performance) is `ed_002 / ed_001` and
+`diag_002` (imaging requests per 1,000 attendances) reuses `ed_001` as its
+denominator. The [index](catalogue.qmd) lists them all.
+
 ## Components
 
 A **component** is one YAML file in `inst/components/` and one SQL file in
@@ -13,7 +29,7 @@ A **component** is one YAML file in `inst/components/` and one SQL file in
 numeric `value` column. The YAML says which it does:
 
 ```yaml
-id: inpatient_bed_minutes
+id: apc_003
 title: Inpatient bed-minutes
 aggregate: sum
 unit: minutes
@@ -21,9 +37,9 @@ source: derived.spells
 ```
 
 Components are the numerators and denominators. They have their own ids
-because denominators are reused: `ed_attendances` is the denominator of the
-four-hour performance and of imaging requests per 1,000 attendances, and the
-numerator of the attendance count.
+because denominators are reused: `ed_001` is the denominator of the
+four-hour performance and of imaging requests per 1,000 attendances, and
+also the ED attendance count metric itself.
 
 Snapshot components, such as the RTT waiting list at each month end, write
 `{{window_start}}` and `{{window_end}}` in their SQL and the package fills
@@ -35,11 +51,11 @@ A **metric** is one YAML file in `inst/metrics/`. It names its numerator,
 its denominator unless it is a count, and how to combine them:
 
 ```yaml
-id: mean_los_days
+id: apc_004
 title: Mean length of stay
 type: mean            # count | percentage | rate | mean
-numerator: inpatient_bed_minutes
-denominator: inpatient_discharges
+numerator: apc_003    # inpatient bed-minutes
+denominator: apc_002  # inpatient discharges
 divisor: 1440         # minutes to days
 unit: days
 grain: month          # month | week | day

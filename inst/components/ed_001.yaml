@@ -1,4 +1,4 @@
-id: ed_attendances
+id: ed_001
 title: ED attendances
 description: One row per emergency department attendance, dated by arrival.
 source: derived.ed_attendances

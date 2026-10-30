@@ -40,7 +40,7 @@ combines them with \code{\link[=combine_components]{combine_components()}}.
 \dontrun{
 con <- perf_connect("sample")
 cat <- read_catalogue()
-x <- build_metric(con, cat, "ed_4h_performance")
+x <- build_metric(con, cat, "ed_003")
 plot_metric(x)
 }
 }

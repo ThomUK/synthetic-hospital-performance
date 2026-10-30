@@ -1,4 +1,4 @@
-id: rtt_incomplete
+id: rtt_001
 title: RTT incomplete pathways at month end
 description: A snapshot component. One row per referral-to-treatment pathway open at the end of each month in the window, dated by that month end. Uses the window placeholders.
 source: derived.rtt_pathways

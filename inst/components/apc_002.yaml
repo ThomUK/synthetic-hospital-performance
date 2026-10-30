@@ -1,4 +1,4 @@
-id: inpatient_discharges
+id: apc_002
 title: Inpatient discharges
 description: Closed spells that were not day cases, dated by discharge. Spells whose discharge precedes their admission are a data quality defect and are excluded.
 source: derived.spells

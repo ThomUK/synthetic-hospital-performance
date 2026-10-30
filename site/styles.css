@@ -1,0 +1,4 @@
+/* Ids are short codes; never break them across lines in tables. */
+table code {
+  white-space: nowrap;
+}

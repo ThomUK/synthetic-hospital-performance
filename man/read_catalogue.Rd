@@ -14,8 +14,9 @@ Defaults to the catalogue shipped with the package.}
 only to inspect a broken catalogue.}
 }
 \value{
-An object of class \code{fhperf_catalogue}: a list with \code{metrics} and
-\code{components} (each a list named by id), \code{sql_dir} and \code{path}.
+An object of class \code{fhperf_catalogue}: a list with \code{metrics},
+\code{components} and \code{domains} (each a list named by id or code), \code{sql_dir}
+and \code{path}.
 }
 \description{
 Read a catalogue of metrics and components
@@ -23,5 +24,5 @@ Read a catalogue of metrics and components
 \examples{
 cat <- read_catalogue()
 metric_ids(cat)
-get_metric(cat, "ed_4h_performance")
+get_metric(cat, "ed_003")
 }

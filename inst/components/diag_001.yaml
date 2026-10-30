@@ -1,4 +1,4 @@
-id: imaging_requests_from_ed
+id: diag_001
 title: Imaging requests from ED
 description: Imaging exams requested from the emergency department (patient source setting 05), dated by request. Exams with no request time are excluded.
 source: derived.imaging_exams

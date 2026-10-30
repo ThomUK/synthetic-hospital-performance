@@ -6,7 +6,7 @@ title: "Metrics"
 library(fhperf)
 built <- readRDS("_data/metrics.rds")
 tab <- merge(built$table, built$summaries[, setdiff(names(built$summaries), "target")], by = "id", sort = FALSE)
-tab <- tab[order(tab$category, tab$title), ]
+tab <- tab[order(match(tab$domain, domain_codes(built$catalogue)), tab$id), ]
 ```
 
 Statistical process control charts for the
@@ -17,15 +17,17 @@ Each metric is defined by one or two components, each a SQL query that
 returns one row per event; the package counts or sums them by month and
 plots the result with
 [NHSRplotthedots](https://nhs-r-community.github.io/NHSRplotthedots/).
-See [how it works](about.qmd).
+The [index](catalogue.qmd) lists every metric with its numerator and
+denominator ids; [how it works](about.qmd) explains the structure.
 
 ```{r table}
 #| results: asis
 icon <- function(variation) gsub("_", " ", gsub("special_cause_", "", variation))
-for (cat_name in unique(tab$category)) {
-  rows <- tab[tab$category == cat_name, ]
-  cat("\n## ", cat_name, "\n\n", sep = "")
+for (dom in unique(tab$domain)) {
+  rows <- tab[tab$domain == dom, ]
+  cat("\n## ", rows$domain_title[1], " (`", dom, "`)\n\n", sep = "")
   out <- data.frame(
+    Id = sprintf("`%s`", rows$id),
     Metric = sprintf("[%s](metrics/%s.qmd)", rows$title, rows$id),
     Type = rows$type,
     Latest = format(rows$period, "%b %Y"),
@@ -44,7 +46,7 @@ for (cat_name in unique(tab$category)) {
 #| fig-height: 4
 #| results: asis
 for (id in tab$id) {
-  cat("\n### ", built$table$title[built$table$id == id], " {.unnumbered}\n\n", sep = "")
+  cat("\n### ", built$table$title[built$table$id == id], " (`", id, "`) {.unnumbered}\n\n", sep = "")
   print(plot_metric(built$metrics[[id]], icons_size = 6))
   cat("\n")
 }

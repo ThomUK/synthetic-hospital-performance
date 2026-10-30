@@ -1,0 +1,6 @@
+id: apc_006
+title: Emergency readmissions within 30 days
+description: Live inpatient discharges followed by an emergency admission of the same person within 30 days, dated by the index discharge so that they align with apc_005 (inpatient discharges, patient alive).
+source: derived.spells
+aggregate: count
+unit: discharges

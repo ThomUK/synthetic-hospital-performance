@@ -1,6 +1,0 @@
-id: inpatient_bed_minutes
-title: Inpatient bed-minutes
-description: Minutes from admission to discharge for the same spells as inpatient_discharges, dated by discharge. Measured in minutes, not midnights, so a spell of 20 hours counts 1200 and a spell crossing one midnight for 90 minutes counts 90.
-source: derived.spells
-aggregate: sum
-unit: minutes

@@ -1,10 +1,9 @@
-id: emergency_readmissions_30d_rate
+id: apc_007
 title: Emergency readmissions within 30 days
 description: The percentage of live inpatient discharges followed by an emergency admission of the same patient within 30 days. Both sides are dated by the index discharge.
-category: Admitted patient care
 type: percentage
-numerator: emergency_readmissions_30d
-denominator: inpatient_discharges_alive
+numerator: apc_006
+denominator: apc_005
 unit: "%"
 grain: month
 improvement_direction: decrease

@@ -4,6 +4,8 @@
 \alias{catalogue-access}
 \alias{metric_ids}
 \alias{component_ids}
+\alias{domain_codes}
+\alias{id_domain}
 \alias{get_metric}
 \alias{get_component}
 \alias{component_sql}
@@ -13,6 +15,10 @@
 metric_ids(cat)
 
 component_ids(cat)
+
+domain_codes(cat)
+
+id_domain(id)
 
 get_metric(cat, id)
 
@@ -30,9 +36,11 @@ metric_components(metric)
 \item{metric}{A metric from \code{\link[=get_metric]{get_metric()}}.}
 }
 \value{
-\code{metric_ids()} and \code{component_ids()} return character vectors;
+\code{metric_ids()}, \code{component_ids()} and \code{domain_codes()} return
+character vectors; \code{id_domain()} returns the domain code of each id;
 \code{get_metric()} and \code{get_component()} return the parsed YAML as a list,
-with defaults filled in (\code{multiplier}, \code{divisor}, \code{grain}, \code{sql});
+with defaults filled in (\code{multiplier}, \code{divisor}, \code{grain}, \code{sql}, and
+for a count metric with no \code{numerator}, the metric's own id);
 \code{component_sql()} returns the component's query as a string;
 \code{metric_components()} returns the component ids a metric uses, named
 \code{numerator} and (unless the metric is a count) \code{denominator}.

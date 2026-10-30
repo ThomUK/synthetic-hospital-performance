@@ -44,20 +44,23 @@ sample_window <- as.Date(c("2023-04-01", "2026-03-31"))
 # Write a throwaway catalogue to a temp directory. `metrics` and
 # `components` are lists of lists; `sql` is a named character vector of
 # component id -> query.
-write_catalogue <- function(metrics = list(), components = list(), sql = character(), env = parent.frame()) {
+write_catalogue <- function(metrics = list(), components = list(), sql = character(),
+                            domains = list(list(code = "t", title = "Test"), list(code = "u", title = "Other")),
+                            env = parent.frame()) {
   dir <- withr::local_tempdir(.local_envir = env)
   for (d in c("metrics", "components", "sql")) dir.create(file.path(dir, d))
+  if (!is.null(domains)) yaml::write_yaml(domains, file.path(dir, "domains.yaml"))
   for (m in metrics) yaml::write_yaml(m, file.path(dir, "metrics", paste0(m$id, ".yaml")))
   for (x in components) yaml::write_yaml(x, file.path(dir, "components", paste0(x$id, ".yaml")))
   for (id in names(sql)) writeLines(sql[[id]], file.path(dir, "sql", paste0(id, ".sql")))
   dir
 }
 
-count_component <- function(id = "events", sql = "SELECT d AS event_date FROM t") {
+count_component <- function(id = "t_001", sql = "SELECT d AS event_date FROM t") {
   list(component = list(id = id, title = id, aggregate = "count"), sql = stats::setNames(sql, id))
 }
 
-toy_metric <- function(id = "m", type = "count", numerator = "events", denominator = NULL, ...) {
+toy_metric <- function(id = "t_002", type = "count", numerator = "t_001", denominator = NULL, ...) {
   m <- list(id = id, title = id, type = type, numerator = numerator, ...)
   if (!is.null(denominator)) m$denominator <- denominator
   m
