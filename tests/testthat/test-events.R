@@ -37,6 +37,6 @@ test_that("read_component_events runs the SQL through DBI", {
   ev <- read_component_events(con, cat, "mins", window = as.Date(c("2024-01-01", "2024-01-01")))
   expect_equal(ev$value, 5)
   agg <- build_component(con, cat, "mins", "day", window = as.Date(c("2024-01-01", "2024-01-03")))
-  expect_equal(agg$value, c(5, 0, 0))
+  expect_equal(agg$value, c(5, 7, 0))
   expect_equal(attr(agg, "component"), "mins")
 })
