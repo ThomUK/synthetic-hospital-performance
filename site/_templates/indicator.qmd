@@ -106,7 +106,7 @@ if (length(bd) == 0) {
 
 ```{r definition}
 #| results: asis
-cat("- **Id:** `", id, "` (domain `", id_domain(id), "`, ", built$catalogue$domains[[id_domain(id)]]$title, ")\n", sep = "")
+cat("- **Id:** `", id, "` (domain `", id_domain(id), "`, ", built$catalogue$domains[[id_domain(id)]]$title, ") &middot; [YAML](../yaml.qmd#yaml-", id, ")\n", sep = "")
 cat("- **Type:** ", m$type, if (m$type != "count") paste0(" (× ", format(m$multiplier), if (m$divisor != 1) paste0(" ÷ ", format(m$divisor)), ")"), "\n", sep = "")
 cat("- **Grain:** ", m$grain, "\n", sep = "")
 cat("- **Improvement direction:** ", m$improvement_direction, "\n", sep = "")
@@ -116,7 +116,7 @@ for (role in names(comps)) {
   comp <- get_component(built$catalogue, comps[[role]])
   label <- if (comps[[role]] == id) paste0(tools::toTitleCase(role), " (itself)") else tools::toTitleCase(role)
   cat("\n### ", label, ": ", comp$title, " {#", comps[[role]], "}\n\n", sep = "")
-  cat("`", comp$id, "` · ", comp$aggregate, if (!is.null(comp$unit)) paste0(" of ", comp$unit), " · source `", comp$source, "`\n\n", sep = "")
+  cat("`", comp$id, "` · ", comp$aggregate, if (!is.null(comp$unit)) paste0(" of ", comp$unit), " · source `", comp$source, "` · [YAML](../yaml.qmd#yaml-", comp$id, ")\n\n", sep = "")
   cat(comp$description, "\n\n")
   cat("```sql\n", component_sql(built$catalogue, comp$id), "\n```\n\n", sep = "")
 }

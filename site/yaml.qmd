@@ -1,0 +1,64 @@
+---
+title: "Definitions"
+toc: false
+---
+
+```{r setup}
+library(fhperf)
+built <- readRDS("_data/indicators.rds")
+cat <- built$catalogue
+read_text <- function(file) paste(readLines(file, warn = FALSE), collapse = "\n")
+`%||%` <- function(a, b) if (is.null(a)) b else a
+```
+
+Every definition in the catalogue as it is written: the YAML file of each
+indicator and component, the SQL of each component, and the two
+registries. Choose a file below, or link to one directly with
+`#yaml-<id>`, for example [`#yaml-ed_003`](#yaml-ed_003).
+
+```{r selector}
+#| results: asis
+it <- indicator_table(cat)
+ct <- component_table(cat)
+shared <- intersect(it$id, ct$id)   # count indicators that are their own component: one block, under Indicators
+opt <- function(id, label) sprintf('<option value="yaml-%s">%s &mdash; %s</option>\n', id, id, label)
+cat('<label class="group-label">Show <select class="form-select form-select-sm yaml-select">\n')
+cat('<optgroup label="Indicators">\n', paste0(opt(it$id, ifelse(it$id %in% shared, paste(it$title, "(indicator and component)"), it$title)), collapse = ""), '</optgroup>\n', sep = "")
+cat('<optgroup label="Components">\n', paste0(opt(ct$id[!ct$id %in% shared], ct$title[!ct$id %in% shared]), collapse = ""), '</optgroup>\n', sep = "")
+cat('<optgroup label="Registries">\n', opt("domains", "domains.yaml"), opt("dimensions", "dimensions.yaml"), '</optgroup>\n', sep = "")
+cat("</select></label>\n\n")
+```
+
+```{r files}
+#| results: asis
+# One block per id. A count indicator that is its own component shows the
+# indicator YAML, then the component YAML and its SQL, in the same block.
+open_block <- function(id, heading) cat(":::: {#yaml-", id, " .yaml-item}\n\n### ", heading, "\n\n", sep = "")
+close_block <- function() cat("::::\n\n")
+code <- function(lang, text) cat("```", lang, "\n", text, "\n```\n\n", sep = "")
+link_ids <- function(x) gsub("\\b([a-z]+_[0-9]{3})\\b", "[`\\1`](indicators/\\1.qmd)", x)
+for (id in sort(unique(c(it$id, ct$id)))) {
+  ind <- cat$indicators[[id]]
+  comp <- cat$components[[id]]
+  open_block(id, paste0(id, ": ", (ind %||% comp)$title))
+  if (!is.null(ind)) {
+    cat(sprintf("**Indicator** &middot; `inst/indicators/%s` &middot; [indicator page](indicators/%s.qmd)\n\n", basename(ind$file), id))
+    code("yaml", read_text(ind$file))
+  }
+  if (!is.null(comp)) {
+    cat(sprintf("**Component** &middot; `inst/components/%s` and `inst/sql/%s` &middot; used by %s\n\n",
+                basename(comp$file), get_component(cat, id)$sql, link_ids(ct$used_by[ct$id == id])))
+    code("yaml", read_text(comp$file))
+    code("sql", component_sql(cat, id))
+  }
+  close_block()
+}
+open_block("domains", "Domains")
+cat("`inst/domains.yaml`: the codes that prefix every id, one per subject matter expert group.\n\n")
+code("yaml", read_text(file.path(cat$path, "domains.yaml")))
+close_block()
+open_block("dimensions", "Dimensions")
+cat("`inst/dimensions.yaml`: the dimensions a component may carry and an indicator may be broken down by.\n\n")
+code("yaml", read_text(file.path(cat$path, "dimensions.yaml")))
+close_block()
+```

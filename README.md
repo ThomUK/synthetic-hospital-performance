@@ -83,8 +83,9 @@ works in place of `perf_connect()`, so a pipeline can bring its own.
 ## The site
 
 `site/` is a Quarto website: a home page of latest values and charts, an
-index of every indicator and component with their ids, a how-it-works page and
-one page per indicator. Its pre-render script `_build.R` builds every indicator,
+index of every indicator and component with their ids, a definitions page
+showing every YAML and SQL file as written, a how-it-works page and one
+page per indicator. Its pre-render script `_build.R` builds every indicator,
 saves the results to `site/_data/` and writes the indicator pages from
 `site/_templates/indicator.qmd`; the pages only read the saved data.
 

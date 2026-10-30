@@ -16,3 +16,7 @@ table code {
 .breakdown-table svg { vertical-align: middle; }
 .group-label { display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; }
 .group-label .form-select { width: auto; }
+
+/* Definitions page: one YAML block at a time. */
+.yaml-item { display: none; }
+.yaml-item.active { display: block; }

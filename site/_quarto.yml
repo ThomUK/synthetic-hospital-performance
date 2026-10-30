@@ -5,6 +5,7 @@ project:
   render:
     - index.qmd
     - catalogue.qmd
+    - yaml.qmd
     - about.qmd
     - indicators/*.qmd
 
@@ -17,6 +18,8 @@ website:
         text: Indicators
       - href: catalogue.qmd
         text: Index
+      - href: yaml.qmd
+        text: Definitions
       - href: about.qmd
         text: How it works
     right:
@@ -30,7 +33,9 @@ format:
   html:
     theme: cosmo
     css: styles.css
-    include-after-body: _includes/breakdown.html
+    include-after-body:
+      - _includes/breakdown.html
+      - _includes/yaml.html
     toc: true
     code-fold: true
     code-tools: false

@@ -1,0 +1,19 @@
+<script>
+// Definitions page: the select shows one YAML block at a time and keeps the
+// URL hash in step, so #yaml-<id> links open the right file.
+document.addEventListener("DOMContentLoaded", function () {
+  var select = document.querySelector(".yaml-select");
+  if (!select) return;
+  var items = document.querySelectorAll(".yaml-item");
+  function show(id, push) {
+    var found = false;
+    items.forEach(function (el) { var on = el.id === id; el.classList.toggle("active", on); found = found || on; });
+    if (!found) { id = select.options[0].value; items.forEach(function (el) { el.classList.toggle("active", el.id === id); }); }
+    if (select.value !== id) select.value = id;
+    if (push && window.location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+  }
+  select.addEventListener("change", function () { show(select.value, true); });
+  window.addEventListener("hashchange", function () { show(window.location.hash.slice(1), false); });
+  show(window.location.hash ? window.location.hash.slice(1) : select.value, false);
+});
+</script>

@@ -11,7 +11,7 @@ ct <- component_table(cat)
 it <- it[order(match(it$domain, domain_codes(cat)), it$id), ]
 ct <- ct[order(match(ct$domain, domain_codes(cat)), ct$id), ]
 indicator_link <- function(id) sprintf("[`%s`](indicators/%s.qmd)", id, id)
-component_link <- function(id) ifelse(is.na(id), "", sprintf("[`%s`](#%s)", id, id))
+component_link <- function(id) ifelse(is.na(id), "", sprintf("[`%s`](yaml.qmd#yaml-%s)", id, id))
 component_title <- function(id) ifelse(is.na(id), "", vapply(id, function(i) if (is.na(i)) "" else get_component(cat, i)$title, character(1)))
 ```
 
