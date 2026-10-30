@@ -68,11 +68,13 @@ plot_indicator_seasons <- function(data, start_month = 4, show_target = TRUE) {
   ends <- d[!is.na(d$value), ]
   ends <- ends[order(ends$position), ]
   ends <- ends[!duplicated(ends$year, fromLast = TRUE), ]
+  ends$label_y <- spread_labels(ends$value, gap = 0.06 * diff(range(d$value, na.rm = TRUE)))
 
   p <- ggplot2::ggplot(d, ggplot2::aes(x = .data$position, y = .data$value, colour = .data$year, group = .data$year)) +
     ggplot2::geom_line(ggplot2::aes(linewidth = .data$year == latest), na.rm = TRUE) +
     ggplot2::geom_point(size = 2, na.rm = TRUE) +
-    ggplot2::geom_text(data = ends, ggplot2::aes(label = .data$year), hjust = -0.15, size = 3.2, show.legend = FALSE, na.rm = TRUE) +
+    ggplot2::geom_text(data = ends, ggplot2::aes(y = .data$label_y, label = .data$year), hjust = -0.15, size = 3.2,
+                       show.legend = FALSE, na.rm = TRUE) +
     ggplot2::scale_colour_manual(values = cols, name = "Financial year") +
     ggplot2::scale_linewidth_manual(values = c(`TRUE` = 1.1, `FALSE` = 0.6), guide = "none") +
     ggplot2::labs(title = ind$title, subtitle = "The same period in each financial year",
@@ -85,6 +87,21 @@ plot_indicator_seasons <- function(data, start_month = 4, show_target = TRUE) {
     p <- p + ggplot2::geom_hline(yintercept = ind$target, linetype = "dashed", colour = "#555555")
   }
   p
+}
+
+# Push label positions apart so that no two are closer than `gap`, moving
+# the sorted sequence outward from the middle so the spread stays centred on
+# the original values.
+spread_labels <- function(y, gap) {
+  if (length(y) < 2 || !is.finite(gap) || gap <= 0) return(y)
+  o <- order(y)
+  s <- y[o]
+  for (i in 2:length(s)) if (s[i] - s[i - 1] < gap) s[i] <- s[i - 1] + gap
+  shift <- mean(s) - mean(y[o])
+  s <- s - shift
+  out <- y
+  out[o] <- s
+  out
 }
 
 # Add year, position and a text label for each row of an indicator series.

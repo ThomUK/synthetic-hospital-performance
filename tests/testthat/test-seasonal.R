@@ -52,3 +52,14 @@ test_that("a partial first year starts mid-axis", {
   expect_equal(d$position, 7:12)
   expect_equal(unique(as.character(d$year)), "2024/25")
 })
+
+test_that("spread_labels separates close labels and leaves distant ones", {
+  sp <- fhperf:::spread_labels
+  expect_equal(sp(c(10, 50), 5), c(10, 50))
+  out <- sp(c(76.5, 76.6, 77.5), 2)
+  expect_true(all(diff(sort(out)) >= 2 - 1e-9))
+  expect_equal(mean(out), mean(c(76.5, 76.6, 77.5)))
+  expect_equal(order(out), order(c(76.5, 76.6, 77.5)))
+  expect_equal(sp(5, 1), 5)
+  expect_equal(sp(c(1, 1.1), 0), c(1, 1.1))
+})
