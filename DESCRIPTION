@@ -29,5 +29,5 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Remotes:
-    ThomUK/synthetic-hospital-data/fakehospdata
+    fakehospdata=ThomUK/synthetic-hospital-data/fakehospdata
 Config/testthat/edition: 3
