@@ -4,16 +4,21 @@
 \alias{plot_six_twelve}
 \title{Draw the 6-12 chart}
 \usage{
-plot_six_twelve(x)
+plot_six_twelve(x, stats = TRUE)
 }
 \arguments{
 \item{x}{A \code{fhperf_six_twelve} from \code{\link[=six_twelve]{six_twelve()}}.}
+
+\item{stats}{Draw the summary row under the chart?}
 }
 \value{
-A ggplot.
+A ggplot; with \code{stats}, a patchwork of the chart over the row,
+which prints and saves like any ggplot.
 }
 \description{
 Two panels with their own y axes: six weekly points and twelve monthly
 points, this year as a heavy blue line with value labels, a year earlier
-as a thin grey line, and the target as triangles.
+as a thin grey line, and the target as triangles. The summary row
+(\code{\link[=format_six_twelve]{format_six_twelve()}}) is drawn beneath the chart as part of the same
+image, so it scales with it.
 }

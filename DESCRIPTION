@@ -19,6 +19,7 @@ Imports:
     DBI,
     NHSRplotthedots (>= 0.2.0),
     ggplot2,
+    patchwork,
     rlang,
     tools,
     utils,

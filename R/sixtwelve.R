@@ -185,12 +185,42 @@ format_six_twelve <- function(x) {
 #'
 #' Two panels with their own y axes: six weekly points and twelve monthly
 #' points, this year as a heavy blue line with value labels, a year earlier
-#' as a thin grey line, and the target as triangles.
+#' as a thin grey line, and the target as triangles. The summary row
+#' ([format_six_twelve()]) is drawn beneath the chart as part of the same
+#' image, so it scales with it.
 #'
 #' @param x A `fhperf_six_twelve` from [six_twelve()].
-#' @return A ggplot.
+#' @param stats Draw the summary row under the chart?
+#' @return A ggplot; with `stats`, a patchwork of the chart over the row,
+#'   which prints and saves like any ggplot.
 #' @export
-plot_six_twelve <- function(x) {
+plot_six_twelve <- function(x, stats = TRUE) {
+  chart <- six_twelve_chart(x)
+  if (!stats) return(chart)
+  patchwork::wrap_plots(chart, six_twelve_stats_panel(x), ncol = 1, heights = c(5, 1))
+}
+
+# The summary row as a ggplot: one column per figure, a bold header above
+# its value, drawn with no axes so it reads as a table.
+six_twelve_stats_panel <- function(x) {
+  row <- format_six_twelve(x)
+  d <- data.frame(
+    col = rep(seq_along(row), 2),
+    y = rep(c(1, 0), each = length(row)),
+    text = c(names(row), unname(unlist(row))),
+    header = rep(c(TRUE, FALSE), each = length(row)),
+    stringsAsFactors = FALSE
+  )
+  ggplot2::ggplot(d, ggplot2::aes(x = .data$col, y = .data$y, label = .data$text)) +
+    ggplot2::geom_text(ggplot2::aes(fontface = ifelse(.data$header, "bold", "plain")), size = 3.4, colour = "#1f2d3d") +
+    ggplot2::annotate("segment", x = 0.6, xend = length(row) + 0.4, y = 0.5, yend = 0.5, colour = "#cfcfcf") +
+    ggplot2::scale_x_continuous(limits = c(0.5, length(row) + 0.5), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(limits = c(-0.6, 1.6), expand = c(0, 0)) +
+    ggplot2::theme_void() +
+    ggplot2::theme(plot.margin = ggplot2::margin(0, 12, 4, 12))
+}
+
+six_twelve_chart <- function(x) {
   ind <- x$indicator
   w <- x$weekly
   w$panel <- "Last 6 weeks"

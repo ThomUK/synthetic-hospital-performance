@@ -95,20 +95,29 @@ test_that("snapshots take the stock at each range's end", {
   expect_equal(x$stats$value[3], 90)
   expect_equal(x$stats$change[3], 0)
   expect_equal(names(format_six_twelve(x)), c("LastWk", "WOW", "YOY", "Latest", "YOY"))
-  expect_true(grepl("Snapshot", plot_six_twelve(x)$labels$subtitle))
+  expect_true(grepl("Snapshot", plot_six_twelve(x, stats = FALSE)$labels$subtitle))
 })
 
-test_that("plot_six_twelve returns a two-panel ggplot", {
+test_that("plot_six_twelve returns a two-panel chart with the summary row beneath", {
   x <- six_twelve_data(num, den, pct, as_of)
-  p <- plot_six_twelve(x)
+  p <- plot_six_twelve(x, stats = FALSE)
   expect_s3_class(p, "ggplot")
   b <- ggplot2::ggplot_build(p)
   expect_equal(length(unique(b$layout$layout$PANEL)), 2)
   expect_equal(p$labels$title, "Rate")
   # no target, no triangle layer
-  p2 <- plot_six_twelve(six_twelve_data(num, NULL, cnt, as_of))
+  p2 <- plot_six_twelve(six_twelve_data(num, NULL, cnt, as_of), stats = FALSE)
   expect_false(any(vapply(p2$layers, function(l) identical(l$aes_params$shape, 17), logical(1))))
   expect_true(any(vapply(p$layers, function(l) identical(l$aes_params$shape, 17), logical(1))))
+  # with the row, the result is still a ggplot (a patchwork of two)
+  full <- plot_six_twelve(x)
+  expect_s3_class(full, "ggplot")
+  expect_s3_class(full, "patchwork")
+  expect_equal(length(full$patches$plots), 1)
+  panel <- fhperf:::six_twelve_stats_panel(x)
+  expect_equal(nrow(panel$data), 18)
+  expect_equal(panel$data$text[1:3], c("LastWk", "WOW", "YOY"))
+  expect_equal(panel$data$text[10:12], c("10.0%", "+0.0 pp", "+2.0 pp"))
 })
 
 test_that("snapshot_dates and the placeholder substitution", {
