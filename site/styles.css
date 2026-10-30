@@ -1,7 +1,8 @@
-/* Ids are short codes; never break them across lines in tables. Bootstrap
-   sets word-wrap: break-word on code, which would otherwise split them. */
+/* Ids are short codes; never break them across lines in tables. Quarto and
+   Bootstrap set pre-wrap and break-word on code with higher precedence,
+   hence !important. */
 table code {
-  white-space: nowrap;
-  word-wrap: normal;
-  overflow-wrap: normal;
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
 }
