@@ -2,12 +2,12 @@
 % Please edit documentation in R/spc.R
 \name{indicator_summary}
 \alias{indicator_summary}
-\title{Summarise the latest point of a indicator}
+\title{Summarise the latest point of an indicator}
 \usage{
 indicator_summary(data)
 }
 \arguments{
-\item{data}{A indicator series from \code{\link[=build_indicator]{build_indicator()}} or \code{\link[=combine_components]{combine_components()}}.}
+\item{data}{An indicator series from \code{\link[=build_indicator]{build_indicator()}} or \code{\link[=combine_components]{combine_components()}}.}
 }
 \value{
 A one-row data frame: \code{id}, \code{period}, \code{value}, \code{variation} (the
@@ -17,5 +17,5 @@ is judged against), \code{target} and \code{assurance} (\code{pass}, \code{fail}
 \code{inconsistent} or \code{NA} without a target).
 }
 \description{
-Summarise the latest point of a indicator
+Summarise the latest point of an indicator
 }

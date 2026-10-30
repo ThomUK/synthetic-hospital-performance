@@ -15,7 +15,7 @@ each indicator as an NHSRplotthedots SPC chart. Deployed to GitHub Pages from
 - **One YAML per indicator and per component; ids are `<domain>_<nnn>`.** The
   domain codes live in `inst/domains.yaml`, one per subject matter expert
   group; a new id takes the owning domain and its next free number, and
-  indicators and components share the numbering. A indicator names its
+  indicators and components share the numbering. An indicator names its
   `numerator` and (unless a count) `denominator` component; a count indicator
   shares its id with its component and omits `numerator`. A component's SQL
   returns one row per event with `event_date` and, for `aggregate: sum`,

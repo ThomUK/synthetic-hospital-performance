@@ -20,6 +20,6 @@ domain codes that prefix every id.
 Every id is \verb{<domain>_<nnn>}, for example \code{ed_003}. Indicators and
 components share the numbering within a domain, and the only id that may
 appear in both folders is a count indicator whose numerator is itself: such
-a indicator omits \code{numerator}, and the component with the same id supplies
+an indicator omits \code{numerator}, and the component with the same id supplies
 the events. So a count is one id and a rate is three.
 }

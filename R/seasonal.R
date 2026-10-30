@@ -39,16 +39,19 @@ fy_position <- function(dates, grain = c("month", "week", "day"), start_month = 
   if (grain == "week") days %/% 7L + 1L else days + 1L
 }
 
-# Fixed categorical hues, oldest year first. Validated for adjacent-pair
-# colour-vision separation on a light surface.
-season_palette <- c("#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948")
+# Colours by recency: the latest year in a heavy blue, the year before in a
+# thin lighter blue, every earlier year in thin grey. Identity beyond that
+# comes from the legend and the label at each line's end.
+season_colours <- c(latest = "#2a78d6", previous = "#6da7ec", earlier = "#a8a8a8")
+season_widths <- c(latest = 1.2, previous = 0.6, earlier = 0.6)
 
 #' Seasonal view of an indicator
 #'
 #' One line per financial year, April to March on the x axis, so the same
-#' month can be compared across years. The latest year is drawn heavier.
-#' At most eight years are shown in colour; earlier years are grouped as
-#' "Earlier" in grey.
+#' month can be compared across years, with points at the data. The latest
+#' year is a heavy blue line, the year before a thin lighter blue, and every
+#' earlier year thin grey; each line is labelled at its end. More than eight
+#' years are folded so the oldest share one "Earlier" series.
 #'
 #' @param data An indicator series from [build_indicator()] or
 #'   [combine_components()].
@@ -62,21 +65,25 @@ plot_indicator_seasons <- function(data, start_month = 4, show_target = TRUE) {
   if (is.null(ind)) stop("data has no indicator attribute; build it with build_indicator() or combine_components()", call. = FALSE)
   d <- season_data(data, start_month)
   years <- levels(d$year)
-  latest <- years[length(years)]
-  cols <- stats::setNames(season_palette[seq_along(years)], years)
-  if ("Earlier" %in% years) cols["Earlier"] <- "#9a9a9a"
+  n <- length(years)
+  recency <- rep("earlier", n)
+  recency[n] <- "latest"
+  if (n >= 2) recency[n - 1] <- "previous"
+  cols <- stats::setNames(unname(season_colours[recency]), years)
+  widths <- stats::setNames(unname(season_widths[recency]), years)
   ends <- d[!is.na(d$value), ]
   ends <- ends[order(ends$position), ]
   ends <- ends[!duplicated(ends$year, fromLast = TRUE), ]
   ends$label_y <- spread_labels(ends$value, gap = 0.06 * diff(range(d$value, na.rm = TRUE)))
 
   p <- ggplot2::ggplot(d, ggplot2::aes(x = .data$position, y = .data$value, colour = .data$year, group = .data$year)) +
-    ggplot2::geom_line(ggplot2::aes(linewidth = .data$year == latest), na.rm = TRUE) +
-    ggplot2::geom_point(size = 2, na.rm = TRUE) +
+    ggplot2::geom_line(ggplot2::aes(linewidth = .data$year), na.rm = TRUE) +
+    ggplot2::geom_point(ggplot2::aes(size = .data$year), na.rm = TRUE) +
     ggplot2::geom_text(data = ends, ggplot2::aes(y = .data$label_y, label = .data$year), hjust = -0.15, size = 3.2,
                        show.legend = FALSE, na.rm = TRUE) +
     ggplot2::scale_colour_manual(values = cols, name = "Financial year") +
-    ggplot2::scale_linewidth_manual(values = c(`TRUE` = 1.1, `FALSE` = 0.6), guide = "none") +
+    ggplot2::scale_linewidth_manual(values = widths, name = "Financial year") +
+    ggplot2::scale_size_manual(values = widths * 1.8, name = "Financial year") +
     ggplot2::labs(title = ind$title, subtitle = "The same period in each financial year",
                   x = NULL, y = ind$unit %||% "") +
     ggplot2::theme_minimal(base_size = 11) +

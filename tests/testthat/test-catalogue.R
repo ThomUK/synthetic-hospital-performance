@@ -96,7 +96,7 @@ test_that("validation reports every problem at once", {
   expect_match(err, "target must be a single number")
   expect_match(err, "multiplier must be positive")
   expect_match(err, "t_013': unknown field\\(s\\) colour")
-  expect_match(err, "id used by both a indicator and a component: t_001 \\(only a count")
+  expect_match(err, "id used by both an indicator and a component: t_001 \\(only a count")
   expect_match(err, "t_014': a count with no numerator needs a component with the same id")
   expect_match(err, "id 'count_with_words' is not <domain>_<nnn>")
   expect_match(err, "id 'zz_001' has a domain that is not in domains.yaml \\(known: t, u\\)")

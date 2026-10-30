@@ -1,4 +1,4 @@
-#' Combine aggregated components into a indicator series
+#' Combine aggregated components into an indicator series
 #'
 #' The value of a period is `numerator / denominator * multiplier / divisor`,
 #' or `numerator * multiplier / divisor` for a count. A period whose
@@ -6,7 +6,7 @@
 #'
 #' @param numerator,denominator Data frames with `period` and `value`, as
 #'   returned by [aggregate_events()]. `denominator` is `NULL` for a count.
-#' @param indicator A indicator from [get_indicator()].
+#' @param indicator An indicator from [get_indicator()].
 #' @return A data frame of class `fhperf_indicator_data` with `period`,
 #'   `numerator`, `denominator` (`NA` for a count) and `value`, and the
 #'   indicator definition in the attribute `indicator`.
@@ -36,13 +36,13 @@ combine_components <- function(numerator, denominator = NULL, indicator) {
   structure(out, class = c("fhperf_indicator_data", "data.frame"), indicator = indicator)
 }
 
-#' Build a indicator from the database
+#' Build an indicator from the database
 #'
 #' Reads and aggregates the indicator's numerator (and denominator) and
 #' combines them with [combine_components()].
 #'
 #' @inheritParams read_component_events
-#' @param id A indicator id.
+#' @param id An indicator id.
 #' @param window A `Date` vector of length two, the first and last day of
 #'   the series. `NULL` uses [dataset_window()] if the `fakehospdata` package
 #'   can supply it, and otherwise the range of the events themselves.
@@ -109,10 +109,10 @@ print.fhperf_indicator_data <- function(x, ...) {
   invisible(x)
 }
 
-#' Format a indicator value for display
+#' Format an indicator value for display
 #'
 #' @param value Numeric values.
-#' @param indicator A indicator from [get_indicator()].
+#' @param indicator An indicator from [get_indicator()].
 #' @return A character vector: counts without decimals, percentages with
 #'   one and a `%` sign, rates and means with one decimal.
 #' @export

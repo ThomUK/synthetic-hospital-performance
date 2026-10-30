@@ -3,14 +3,14 @@
 \name{indicator_spc}
 \alias{indicator_spc}
 \alias{plot_indicator}
-\title{SPC analysis and chart of a indicator}
+\title{SPC analysis and chart of an indicator}
 \usage{
 indicator_spc(data)
 
 plot_indicator(data, ...)
 }
 \arguments{
-\item{data}{A indicator series from \code{\link[=build_indicator]{build_indicator()}} or \code{\link[=combine_components]{combine_components()}}.}
+\item{data}{An indicator series from \code{\link[=build_indicator]{build_indicator()}} or \code{\link[=combine_components]{combine_components()}}.}
 
 \item{...}{Passed to \code{\link[NHSRplotthedots:ptd_create_ggplot]{NHSRplotthedots::ptd_create_ggplot()}}, for example
 \code{point_size} or \code{icons_position}.}
@@ -19,7 +19,7 @@ plot_indicator(data, ...)
 \code{indicator_spc()} returns a \code{ptd_spc_df}; \code{plot_indicator()} a ggplot.
 }
 \description{
-\code{indicator_spc()} runs \code{\link[NHSRplotthedots:ptd_spc]{NHSRplotthedots::ptd_spc()}} on a indicator series with
+\code{indicator_spc()} runs \code{\link[NHSRplotthedots:ptd_spc]{NHSRplotthedots::ptd_spc()}} on an indicator series with
 the improvement direction, target and rebase dates of its YAML.
 \code{plot_indicator()} draws it with \code{\link[NHSRplotthedots:ptd_create_ggplot]{NHSRplotthedots::ptd_create_ggplot()}}.
 Periods with no value (a zero denominator) are left out of the analysis.

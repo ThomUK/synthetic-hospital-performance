@@ -20,7 +20,8 @@ A ggplot.
 }
 \description{
 One line per financial year, April to March on the x axis, so the same
-month can be compared across years. The latest year is drawn heavier.
-At most eight years are shown in colour; earlier years are grouped as
-"Earlier" in grey.
+month can be compared across years, with points at the data. The latest
+year is a heavy blue line, the year before a thin lighter blue, and every
+earlier year thin grey; each line is labelled at its end. More than eight
+years are folded so the oldest share one "Earlier" series.
 }

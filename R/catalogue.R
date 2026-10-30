@@ -9,7 +9,7 @@
 #' Every id is `<domain>_<nnn>`, for example `ed_003`. Indicators and
 #' components share the numbering within a domain, and the only id that may
 #' appear in both folders is a count indicator whose numerator is itself: such
-#' a indicator omits `numerator`, and the component with the same id supplies
+#' an indicator omits `numerator`, and the component with the same id supplies
 #' the events. So a count is one id and a rate is three.
 #'
 #' @return A directory path.
@@ -89,14 +89,14 @@ print.fhperf_catalogue <- function(x, ...) {
 #' Ids, indicators and components of a catalogue
 #'
 #' @param cat A catalogue from [read_catalogue()].
-#' @param id A indicator or component id.
+#' @param id An indicator or component id.
 #' @return `indicator_ids()`, `component_ids()` and `domain_codes()` return
 #'   character vectors; `id_domain()` returns the domain code of each id;
 #'   `get_indicator()` and `get_component()` return the parsed YAML as a list,
 #'   with defaults filled in (`multiplier`, `divisor`, `grain`, `sql`, and
 #'   for a count indicator with no `numerator`, the indicator's own id);
 #'   `component_sql()` returns the component's query as a string;
-#'   `indicator_components()` returns the component ids a indicator uses, named
+#'   `indicator_components()` returns the component ids an indicator uses, named
 #'   `numerator` and (unless the indicator is a count) `denominator`.
 #' @name catalogue-access
 #' @export
@@ -146,7 +146,7 @@ component_sql <- function(cat, id) {
 }
 
 #' @rdname catalogue-access
-#' @param indicator A indicator from [get_indicator()].
+#' @param indicator An indicator from [get_indicator()].
 #' @export
 indicator_components <- function(indicator) {
   out <- c(numerator = indicator$numerator)
@@ -215,7 +215,7 @@ component_table <- function(cat) {
 #' `<domain>_<nnn>` or whose domain is not in `domains.yaml`, unknown
 #' fields, missing required fields, illegal values, references to
 #' components that do not exist, missing SQL files, a denominator on a count
-#' indicator or none on any other, and an id used by both a indicator and a
+#' indicator or none on any other, and an id used by both an indicator and a
 #' component unless the indicator is a count whose numerator is itself.
 #'
 #' @inheritParams catalogue-access
@@ -226,7 +226,7 @@ validate_catalogue <- function(cat) {
   for (id in intersect(indicator_ids(cat), component_ids(cat))) {
     m <- cat$indicators[[id]]
     self <- identical(m$type, "count") && (is.null(m$numerator) || identical(m$numerator, id))
-    if (!self) problems <- c(problems, paste0("id used by both a indicator and a component: ", id, " (only a count whose numerator is itself may share its id)"))
+    if (!self) problems <- c(problems, paste0("id used by both an indicator and a component: ", id, " (only a count whose numerator is itself may share its id)"))
   }
   if (length(problems) > 0) {
     stop("Invalid catalogue:\n", paste0("  - ", problems, collapse = "\n"), call. = FALSE)

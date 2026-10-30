@@ -17,6 +17,6 @@ Every problem found is reported in a single error: ids that are not
 \verb{<domain>_<nnn>} or whose domain is not in \code{domains.yaml}, unknown
 fields, missing required fields, illegal values, references to
 components that do not exist, missing SQL files, a denominator on a count
-indicator or none on any other, and an id used by both a indicator and a
+indicator or none on any other, and an id used by both an indicator and a
 component unless the indicator is a count whose numerator is itself.
 }

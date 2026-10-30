@@ -2,7 +2,7 @@
 % Please edit documentation in R/indicators.R
 \name{combine_components}
 \alias{combine_components}
-\title{Combine aggregated components into a indicator series}
+\title{Combine aggregated components into an indicator series}
 \usage{
 combine_components(numerator, denominator = NULL, indicator)
 }
@@ -10,7 +10,7 @@ combine_components(numerator, denominator = NULL, indicator)
 \item{numerator, denominator}{Data frames with \code{period} and \code{value}, as
 returned by \code{\link[=aggregate_events]{aggregate_events()}}. \code{denominator} is \code{NULL} for a count.}
 
-\item{indicator}{A indicator from \code{\link[=get_indicator]{get_indicator()}}.}
+\item{indicator}{An indicator from \code{\link[=get_indicator]{get_indicator()}}.}
 }
 \value{
 A data frame of class \code{fhperf_indicator_data} with \code{period},

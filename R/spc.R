@@ -1,11 +1,11 @@
-#' SPC analysis and chart of a indicator
+#' SPC analysis and chart of an indicator
 #'
-#' `indicator_spc()` runs [NHSRplotthedots::ptd_spc()] on a indicator series with
+#' `indicator_spc()` runs [NHSRplotthedots::ptd_spc()] on an indicator series with
 #' the improvement direction, target and rebase dates of its YAML.
 #' `plot_indicator()` draws it with [NHSRplotthedots::ptd_create_ggplot()].
 #' Periods with no value (a zero denominator) are left out of the analysis.
 #'
-#' @param data A indicator series from [build_indicator()] or [combine_components()].
+#' @param data An indicator series from [build_indicator()] or [combine_components()].
 #' @param ... Passed to [NHSRplotthedots::ptd_create_ggplot()], for example
 #'   `point_size` or `icons_position`.
 #' @return `indicator_spc()` returns a `ptd_spc_df`; `plot_indicator()` a ggplot.
@@ -44,7 +44,7 @@ plot_indicator <- function(data, ...) {
   do.call(NHSRplotthedots::ptd_create_ggplot, args)
 }
 
-#' Summarise the latest point of a indicator
+#' Summarise the latest point of an indicator
 #'
 #' @inheritParams indicator_spc
 #' @return A one-row data frame: `id`, `period`, `value`, `variation` (the

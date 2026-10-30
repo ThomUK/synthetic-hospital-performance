@@ -31,9 +31,9 @@ indicator_components(indicator)
 \arguments{
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 
-\item{id}{A indicator or component id.}
+\item{id}{An indicator or component id.}
 
-\item{indicator}{A indicator from \code{\link[=get_indicator]{get_indicator()}}.}
+\item{indicator}{An indicator from \code{\link[=get_indicator]{get_indicator()}}.}
 }
 \value{
 \code{indicator_ids()}, \code{component_ids()} and \code{domain_codes()} return
@@ -42,7 +42,7 @@ character vectors; \code{id_domain()} returns the domain code of each id;
 with defaults filled in (\code{multiplier}, \code{divisor}, \code{grain}, \code{sql}, and
 for a count indicator with no \code{numerator}, the indicator's own id);
 \code{component_sql()} returns the component's query as a string;
-\code{indicator_components()} returns the component ids a indicator uses, named
+\code{indicator_components()} returns the component ids an indicator uses, named
 \code{numerator} and (unless the indicator is a count) \code{denominator}.
 }
 \description{

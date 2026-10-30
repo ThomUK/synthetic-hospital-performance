@@ -3,7 +3,7 @@
 \name{build_indicator}
 \alias{build_indicator}
 \alias{build_indicators}
-\title{Build a indicator from the database}
+\title{Build an indicator from the database}
 \usage{
 build_indicator(con, cat, id, window = NULL, cache = new.env())
 
@@ -15,7 +15,7 @@ build_indicators(con, cat, ids = indicator_ids(cat), window = NULL)
 
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 
-\item{id}{A indicator id.}
+\item{id}{An indicator id.}
 
 \item{window}{A \code{Date} vector of length two, the first and last day of
 the series. \code{NULL} uses \code{\link[=dataset_window]{dataset_window()}} if the \code{fakehospdata} package

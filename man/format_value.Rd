@@ -2,19 +2,19 @@
 % Please edit documentation in R/indicators.R
 \name{format_value}
 \alias{format_value}
-\title{Format a indicator value for display}
+\title{Format an indicator value for display}
 \usage{
 format_value(value, indicator)
 }
 \arguments{
 \item{value}{Numeric values.}
 
-\item{indicator}{A indicator from \code{\link[=get_indicator]{get_indicator()}}.}
+\item{indicator}{An indicator from \code{\link[=get_indicator]{get_indicator()}}.}
 }
 \value{
 A character vector: counts without decimals, percentages with
 one and a \verb{\%} sign, rates and means with one decimal.
 }
 \description{
-Format a indicator value for display
+Format an indicator value for display
 }

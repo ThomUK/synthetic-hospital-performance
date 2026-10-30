@@ -58,7 +58,7 @@ perf_disconnect(con)
 Any DBI connection with the dataset's schemas (`derived`, `layer1`, ...)
 works in place of `perf_connect()`, so a pipeline can bring its own.
 
-### Adding a indicator
+### Adding an indicator
 
 1. Pick the owning domain and take its next free number for each new id.
    Reuse an existing denominator if one fits; `component_table()` shows

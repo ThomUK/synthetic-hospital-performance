@@ -29,6 +29,14 @@ test_that("plot_indicator_seasons draws one line per financial year", {
   expect_equal(levels(d$year), c("2023/24", "2024/25", "2025/26"))
   expect_equal(range(d$position), c(1, 12))
   expect_equal(p$labels$title, "Counts")
+  # latest year heavy blue, previous thin lighter blue, earlier grey; points share the line colour
+  built <- ggplot2::ggplot_build(p)
+  line_layer <- built$data[[1]]
+  point_layer <- built$data[[2]]
+  by_year <- unique(line_layer[, c("group", "colour", "linewidth")])
+  expect_equal(by_year$colour[order(by_year$group)], c("#a8a8a8", "#6da7ec", "#2a78d6"))
+  expect_true(by_year$linewidth[by_year$group == 3] > max(by_year$linewidth[by_year$group != 3]))
+  expect_equal(sort(unique(point_layer$colour)), sort(unique(line_layer$colour)))
   # a target becomes a dashed line; NA values are tolerated
   with_target <- series(c(NA, round(100 + rnorm(23, sd = 5))), modifyList(count_ind, list(target = 90)))
   p2 <- plot_indicator_seasons(with_target)

@@ -3,7 +3,7 @@ title: "How it works"
 ---
 
 The site is rendered from the [`fhperf`](https://github.com/ThomUK/synthetic-hospital-performance)
-R package. Everything a indicator needs is in three folders under `inst/`.
+R package. Everything an indicator needs is in three folders under `inst/`.
 
 ## Ids and domains
 
@@ -73,7 +73,7 @@ are `target` and `rebase` (a list of dates), which are passed straight to
 1. `read_catalogue()` reads and validates every YAML.
 2. `read_component_events()` runs a component's SQL through DBI.
 3. `aggregate_events()` counts or sums the events into complete periods.
-4. `combine_components()` turns numerator and denominator into a indicator series.
+4. `combine_components()` turns numerator and denominator into an indicator series.
 5. `indicator_spc()` and `plot_indicator()` wrap NHSRplotthedots.
 
 `build_indicators()` runs steps 2 to 4 for every indicator, reading each component
