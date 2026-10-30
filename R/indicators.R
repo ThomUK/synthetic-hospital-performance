@@ -82,7 +82,7 @@ build_indicator <- function(con, cat, id, window = NULL, cache = new.env(), by =
   get <- function(component) {
     comp <- get_component(cat, component)
     events <- cached_events(con, cat, component, window, cache)
-    aggregate_events(events, m$grain, comp$aggregate, window, by)
+    aggregate_events(events, m$grain, comp$aggregate, window, by, snapshot = comp$snapshot)
   }
   num <- get(m$numerator)
   den <- if (is.null(m$denominator)) NULL else get(m$denominator)
@@ -91,9 +91,9 @@ build_indicator <- function(con, cat, id, window = NULL, cache = new.env(), by =
   out
 }
 
-cached_events <- function(con, cat, component, window, cache) {
-  key <- paste("events", component, paste(format(window), collapse = "/"), sep = "|")
-  if (is.null(cache[[key]])) cache[[key]] <- read_component_events(con, cat, component, window)
+cached_events <- function(con, cat, component, window, cache, snapshot_dates = NULL) {
+  key <- paste("events", component, paste(format(window), collapse = "/"), paste(format(snapshot_dates), collapse = ","), sep = "|")
+  if (is.null(cache[[key]])) cache[[key]] <- read_component_events(con, cat, component, window, snapshot_dates)
   cache[[key]]
 }
 

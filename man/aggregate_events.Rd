@@ -9,7 +9,8 @@ aggregate_events(
   grain = c("month", "week", "day"),
   aggregate = c("count", "sum"),
   window = NULL,
-  by = NULL
+  by = NULL,
+  snapshot = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,11 @@ aggregate_events(
 \item{window}{Optional \code{Date} vector of length two.}
 
 \item{by}{Optional name of a column of \code{events} to group by.}
+
+\item{snapshot}{Are the events snapshots rather than a flow? Then only
+the rows dated at a period's end are kept (month ends for months,
+Sundays for weeks, every date for days) so a period's value is the
+stock at its end, and periods without a snapshot are \code{NA}, not \code{0}.}
 }
 \value{
 A data frame with \code{period} (Date, the first day of the period),

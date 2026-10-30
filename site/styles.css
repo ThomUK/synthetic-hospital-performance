@@ -20,3 +20,8 @@ table code {
 /* Definitions page: one YAML block at a time. */
 .yaml-item { display: none; }
 .yaml-item.active { display: block; }
+
+/* The 6-12 summary row: a compact table under the chart. */
+.six-twelve-stats table { width: auto; margin: 0 auto 1rem; font-size: 0.9rem; }
+.six-twelve-stats th { text-decoration: underline; font-weight: 600; text-align: center !important; padding: 0.2rem 0.9rem; }
+.six-twelve-stats td { text-align: center !important; padding: 0.2rem 0.9rem; }

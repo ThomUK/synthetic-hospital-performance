@@ -68,6 +68,28 @@ otherwise. A period whose denominator is zero has no value. Optional fields
 are `target` and `rebase` (a list of dates), which are passed straight to
 `NHSRplotthedots::ptd_spc()`.
 
+## The three charts
+
+Each indicator has three views of the same series. The **SPC** chart is
+NHSRplotthedots' XmR chart with its variation and assurance icons. The
+**by financial year** chart lays April to March of each year over one
+another for seasonal comparison. The **6-12** chart is the weekly business
+review view: the last six complete weeks and the last twelve complete
+months, each against the same period a year earlier (weeks against the
+week 52 weeks before, so weekdays line up) and the target, with a row of
+figures beneath: last week with its week-on-week and year-on-year change,
+then month-, quarter- and year-to-date with their year-on-year change.
+Years and quarters start in April. Changes are percentage changes, except
+for percentage indicators, where they are percentage-point differences.
+Every figure is computed from the components summed over the range, so a
+quarter's rate is the quarter's numerator over its denominator.
+
+Snapshot indicators, such as the RTT waiting list, measure a stock rather
+than a flow: the component is marked `snapshot: true`, the package supplies
+the dates to measure on (every month end and week end plus the as-of day),
+and a period's value is the position at its end. Their 6-12 row shows the
+last week and the latest position rather than to-date sums.
+
 ## Breakdowns
 
 A component may declare **dimensions**, extra columns its SQL returns with

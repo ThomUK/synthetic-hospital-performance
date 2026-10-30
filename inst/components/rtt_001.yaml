@@ -1,7 +1,8 @@
 id: rtt_001
 title: RTT incomplete pathways at month end
-description: A snapshot component. One row per referral-to-treatment pathway open at the end of each month in the window, dated by that month end. Uses the window placeholders.
+description: A snapshot component. One row per referral-to-treatment pathway open on each snapshot date the package asks for (month ends, week ends and the as-of date), dated by that snapshot.
 source: derived.rtt_pathways
 aggregate: count
 unit: pathways
 dimensions: [specialty]
+snapshot: true

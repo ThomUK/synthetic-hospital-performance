@@ -75,7 +75,8 @@ label_groups <- function(data, labels) {
 #'
 #' @param data A grouped indicator series from [build_indicator()] with `by`.
 #' @param min_per_period The threshold; `0` folds nothing.
-#' @return The series with the small groups replaced by `"Other"`.
+#' @return The series with the small groups replaced by `"Other"`, and the
+#'   folded codes in the attribute `folded`.
 #' @export
 fold_small_groups <- function(data, min_per_period = 0) {
   if (!"group" %in% names(data)) stop("data is not grouped", call. = FALSE)
@@ -97,7 +98,21 @@ fold_small_groups <- function(data, min_per_period = 0) {
   d <- d[order(d$group, d$period), c("period", "group", "label", "numerator", "denominator", "value")]
   rownames(d) <- NULL
   attributes(d) <- c(attributes(d)[c("names", "row.names")], attrs[setdiff(names(attrs), c("names", "row.names"))])
+  attr(d, "folded") <- small
   d
+}
+
+#' The codes behind a group of a breakdown
+#'
+#' `"Other"` stands for the groups [fold_small_groups()] merged; any other
+#' code stands for itself.
+#'
+#' @param data A grouped indicator series.
+#' @param code A group code.
+#' @return A character vector of the original codes.
+#' @export
+group_codes <- function(data, code) {
+  if (code == "Other" && !is.null(attr(data, "folded"))) attr(data, "folded") else code
 }
 
 #' One group of a breakdown as an ordinary indicator series

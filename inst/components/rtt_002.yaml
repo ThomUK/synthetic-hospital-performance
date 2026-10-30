@@ -1,7 +1,8 @@
 id: rtt_002
 title: RTT incomplete pathways waiting 18 weeks or less at month end
-description: A snapshot component. The open pathways of rtt_001 that had waited 18 weeks (126 days) or less at the month end.
+description: A snapshot component. The open pathways of rtt_001 that had waited 18 weeks (126 days) or less on the snapshot date.
 source: derived.rtt_pathways
 aggregate: count
 unit: pathways
 dimensions: [specialty]
+snapshot: true

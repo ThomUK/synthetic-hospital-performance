@@ -12,7 +12,8 @@ fold_small_groups(data, min_per_period = 0)
 \item{min_per_period}{The threshold; \code{0} folds nothing.}
 }
 \value{
-The series with the small groups replaced by \code{"Other"}.
+The series with the small groups replaced by \code{"Other"}, and the
+folded codes in the attribute \code{folded}.
 }
 \description{
 A group whose denominator (numerator, for a count) averages fewer than

@@ -31,6 +31,21 @@ plot_indicator(x)
 plot_indicator_seasons(x)
 ```
 
+## 6-12
+
+```{r sixtwelve}
+#| fig-alt: !expr paste("The last six weeks and twelve months of", m$title, "against a year earlier")
+six <- built$six_twelve[[id]]
+plot_six_twelve(six)
+```
+
+```{r sixtwelve-stats}
+#| results: asis
+cat('<div class="six-twelve-stats">\n')
+print(knitr::kable(format_six_twelve(six), align = "r"))
+cat('\n</div>\n')
+```
+
 :::
 
 ::: {.callout-note collapse="false" appearance="minimal"}
@@ -93,6 +108,14 @@ if (length(bd) == 0) {
       print(plot_indicator(g))
       cat("\n\n##### By financial year\n\n")
       print(plot_indicator_seasons(g))
+      six_g <- built$six_twelve_breakdowns[[id]][[dim]][[s$group[i]]]
+      if (!is.null(six_g)) {
+        cat("\n\n##### 6-12\n\n")
+        print(plot_six_twelve(six_g))
+        cat('\n\n<div class="six-twelve-stats">\n')
+        print(knitr::kable(format_six_twelve(six_g), align = "r"))
+        cat('\n</div>\n')
+      }
       cat("\n\n:::\n\n")
       cat(":::\n\n")
     }

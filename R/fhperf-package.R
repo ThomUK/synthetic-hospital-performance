@@ -6,7 +6,7 @@
 NULL
 
 # Field names a component YAML may carry. `sql` defaults to `<id>.sql`.
-component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql", "dimensions")
+component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql", "dimensions", "snapshot")
 
 # Field names an indicator YAML may carry.
 indicator_fields <- c(

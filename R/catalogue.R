@@ -161,7 +161,24 @@ get_component <- function(cat, id) {
   if (is.null(x)) stop("No component with id '", id, "'", call. = FALSE)
   x$sql <- x$sql %||% paste0(id, ".sql")
   x$dimensions <- as.character(unlist(x$dimensions))
+  x$snapshot <- isTRUE(x$snapshot)
   x
+}
+
+#' Is an indicator a snapshot?
+#'
+#' A snapshot component measures a stock at a moment, such as a waiting
+#' list, rather than a flow of events; its YAML says `snapshot: true` and
+#' its SQL takes `{{snapshot_dates}}`. A period's value is then the
+#' snapshot at the period's end, and periods are never summed. An
+#' indicator is a snapshot when its components are.
+#'
+#' @inheritParams catalogue-access
+#' @return `TRUE` or `FALSE`.
+#' @export
+is_snapshot <- function(cat, id) {
+  comps <- indicator_components(get_indicator(cat, id))
+  all(vapply(comps, function(c) get_component(cat, c)$snapshot, logical(1)))
 }
 
 #' The dimensions an indicator can be broken down by
@@ -247,7 +264,7 @@ component_table <- function(cat) {
     d <- id_domain(id)
     data.frame(
       id = id, domain = d, domain_title = cat$domains[[d]]$title %||% d,
-      title = x$title, aggregate = x$aggregate, unit = x$unit %||% NA_character_,
+      title = x$title, aggregate = x$aggregate, snapshot = x$snapshot, unit = x$unit %||% NA_character_,
       source = x$source %||% NA_character_, sql = x$sql,
       dimensions = paste(x$dimensions, collapse = ", "),
       used_by = paste(uses$use[uses$component == id], collapse = ", "),
@@ -310,6 +327,12 @@ check_components <- function(cat) {
     dims <- as.character(unlist(x$dimensions))
     unknown <- setdiff(dims, names(cat$dimensions))
     if (length(unknown) > 0) p <- c(p, paste0(where, ": dimension(s) not in dimensions.yaml: ", paste(unknown, collapse = ", ")))
+    if (!is.null(x$snapshot) && !is.logical(x$snapshot)) p <- c(p, paste0(where, ": snapshot must be true or false"))
+    if (file.exists(sql)) {
+      uses <- any(grepl("{{snapshot_dates}}", readLines(sql, warn = FALSE), fixed = TRUE))
+      if (isTRUE(x$snapshot) && !uses) p <- c(p, paste0(where, ": a snapshot component's SQL must use {{snapshot_dates}}"))
+      if (!isTRUE(x$snapshot) && uses) p <- c(p, paste0(where, ": SQL uses {{snapshot_dates}} but the component is not marked snapshot: true"))
+    }
     p
   }), use.names = FALSE)
 }
@@ -357,9 +380,13 @@ check_indicators <- function(cat) {
       ok <- tryCatch(!anyNA(as.Date(unlist(m$rebase))), error = function(e) FALSE)
       if (!ok) p <- c(p, paste0(where, ": rebase must be a list of dates"))
     }
+    comps <- c(m$numerator %||% if (identical(m$type, "count")) m$id, m$denominator)
+    comps <- comps[comps %in% names(cat$components)]
+    snaps <- vapply(comps, function(c) isTRUE(cat$components[[c]]$snapshot), logical(1))
+    if (length(snaps) > 1 && length(unique(snaps)) > 1) {
+      p <- c(p, paste0(where, ": numerator and denominator must both be snapshots, or neither"))
+    }
     if (!is.null(m$breakdowns)) {
-      comps <- c(m$numerator %||% if (identical(m$type, "count")) m$id, m$denominator)
-      comps <- comps[comps %in% names(cat$components)]
       shared <- Reduce(intersect, lapply(comps, function(c) as.character(unlist(cat$components[[c]]$dimensions))), accumulate = FALSE)
       bad <- setdiff(as.character(unlist(m$breakdowns)), shared %||% character())
       if (length(bad) > 0) p <- c(p, paste0(where, ": breakdown(s) not carried by every component: ", paste(bad, collapse = ", ")))

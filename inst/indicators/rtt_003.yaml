@@ -1,6 +1,6 @@
 id: rtt_003
 title: RTT incomplete pathways within 18 weeks
-description: The percentage of referral-to-treatment pathways open at the month end that had waited 18 weeks or less. A month-end snapshot, so the grain is fixed at monthly.
+description: "The percentage of referral-to-treatment pathways open at the period end that had waited 18 weeks or less. A snapshot indicator: each period's value is the waiting list at the period's end, not a sum over it."
 type: percentage
 numerator: rtt_002
 denominator: rtt_001

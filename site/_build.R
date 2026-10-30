@@ -28,11 +28,27 @@ breakdowns <- lapply(indicator_ids(cat), function(id) {
 names(breakdowns) <- indicator_ids(cat)
 breakdown_summaries <- lapply(breakdowns, function(by_dim) lapply(by_dim, breakdown_summary))
 
+# The 6-12 view for every indicator and every breakdown group, as of the
+# window's last day.
+six <- lapply(indicator_ids(cat), function(id) six_twelve(con, cat, id, window = window, cache = cache))
+names(six) <- indicator_ids(cat)
+six_breakdowns <- lapply(indicator_ids(cat), function(id) {
+  lapply(breakdowns[[id]], function(x) {
+    dim <- attr(x, "dimension")$id
+    codes <- unique(x$group)
+    out <- lapply(codes, function(code) six_twelve(con, cat, id, window = window, cache = cache, by = dim, group = group_codes(x, code)))
+    names(out) <- codes
+    out
+  })
+})
+names(six_breakdowns) <- indicator_ids(cat)
+
 dir.create("_data", showWarnings = FALSE)
 saveRDS(list(
   built_at = Sys.time(), scale = scale, window = window, min_per_period = min_per_period,
   catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries,
-  breakdowns = breakdowns, breakdown_summaries = breakdown_summaries
+  breakdowns = breakdowns, breakdown_summaries = breakdown_summaries,
+  six_twelve = six, six_twelve_breakdowns = six_breakdowns
 ), "_data/indicators.rds")
 
 # One page per indicator. Existing generated pages are removed first so that a

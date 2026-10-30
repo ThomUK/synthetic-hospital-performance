@@ -4,7 +4,7 @@
 \alias{read_component_events}
 \title{Read the events of a component}
 \usage{
-read_component_events(con, cat, id, window = NULL)
+read_component_events(con, cat, id, window = NULL, snapshot_dates = NULL)
 }
 \arguments{
 \item{con}{A \code{DBI} connection with the dataset attached, for example from
@@ -17,6 +17,9 @@ data frame, for a pipeline that supplies its own reader.}
 
 \item{window}{Optional \code{Date} vector of length two, the first and last
 day of interest. Events are not filtered here; see \code{\link[=aggregate_events]{aggregate_events()}}.}
+
+\item{snapshot_dates}{Extra dates a snapshot component should measure,
+beyond the month and week ends of the window.}
 }
 \value{
 A data frame with \code{event_date} (Date) and any other columns the
@@ -31,8 +34,9 @@ cannot be placed in a period and are dropped with a warning.
 }
 \details{
 The SQL may contain the placeholders \code{{{window_start}}} and
-\code{{{window_end}}}, which are replaced by \verb{DATE 'yyyy-mm-dd'} literals from
-\code{window}. Snapshot components (for example a waiting list at each month
-end) use them to know which period ends to generate; such a component
-cannot be read without a window.
+\code{{{window_end}}}, replaced by \verb{DATE 'yyyy-mm-dd'} literals from \code{window},
+and \code{{{snapshot_dates}}}, replaced by a list literal of the dates a
+snapshot component should measure: every month end and week end in the
+window, the window's last day, and any \code{snapshot_dates} asked for. Such
+components cannot be read without a window.
 }

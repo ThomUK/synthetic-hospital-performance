@@ -27,7 +27,13 @@ chart. Nothing in the data is real.
   is the component with the same id. A rate is three.
 - The package reads the events, aggregates them into complete periods,
   combines numerator and denominator, and hands the series to
-  `NHSRplotthedots::ptd_spc()`.
+  `NHSRplotthedots::ptd_spc()`. Two more views come from the same events:
+  one line per financial year (`plot_indicator_seasons()`) and the weekly
+  business review 6-12 chart with its to-date figures (`six_twelve()`,
+  `plot_six_twelve()`).
+- A **snapshot** component (`snapshot: true`, SQL using `{{snapshot_dates}}`)
+  measures a stock such as a waiting list; the package supplies the dates
+  and a period's value is the position at its end, never a sum.
 
 ```
 inst/
@@ -62,6 +68,8 @@ all <- build_indicators(con, cat)         # every indicator; shared components r
 by <- build_breakdowns(con, cat, "apc_004", min_per_period = 5)   # by site and specialty
 breakdown_summary(by$specialty)           # one row per specialty with icons
 plot_indicator(group_series(by$site, "RZ902"))
+six <- six_twelve(con, cat, "ed_003")    # last 6 weeks, 12 months, and LastWk/MTD/QTD/YTD with YOY
+plot_six_twelve(six); format_six_twelve(six)
 perf_disconnect(con)
 ```
 

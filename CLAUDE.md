@@ -27,6 +27,10 @@ each indicator as an NHSRplotthedots SPC chart. Deployed to GitHub Pages from
   never new ids, and their groups must add up to the whole (the integration
   test checks this). Site and specialty of a ratio's numerator must be taken
   from the same record as the denominator's.
+- **Snapshot components** (`snapshot: true`) measure a stock; their SQL
+  takes `{{snapshot_dates}}` from the package and a period's value is the
+  position at its end. Never sum snapshot periods. An indicator's components
+  must all be snapshots or none.
 - **Reuse denominators.** Before adding a component, check whether one in
   `inst/components/` already defines the population.
 - **Keep the database out of the pages.** `site/_build.R` is the only
