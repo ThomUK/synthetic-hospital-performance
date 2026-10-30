@@ -6,10 +6,10 @@ params:
 
 ```{r setup}
 library(fhperf)
-built <- readRDS(file.path(if (file.exists("_data/metrics.rds")) "." else "..", "_data", "metrics.rds"))
+built <- readRDS(file.path(if (file.exists("_data/indicators.rds")) "." else "..", "_data", "indicators.rds"))
 id <- params$id
-m <- get_metric(built$catalogue, id)
-x <- built$metrics[[id]]
+m <- get_indicator(built$catalogue, id)
+x <- built$indicators[[id]]
 s <- built$summaries[built$summaries$id == id, ]
 ```
 
@@ -17,7 +17,7 @@ s <- built$summaries[built$summaries$id == id, ]
 
 ```{r chart}
 #| fig-alt: !expr paste("SPC chart of", m$title)
-plot_metric(x)
+plot_indicator(x)
 ```
 
 ::: {.callout-note collapse="false" appearance="minimal"}
@@ -46,7 +46,7 @@ cat("- **Type:** ", m$type, if (m$type != "count") paste0(" (× ", format(m$mult
 cat("- **Grain:** ", m$grain, "\n", sep = "")
 cat("- **Improvement direction:** ", m$improvement_direction, "\n", sep = "")
 if (!is.null(m$target)) cat("- **Target:** ", format_value(m$target, m), "\n", sep = "")
-comps <- metric_components(m)
+comps <- indicator_components(m)
 for (role in names(comps)) {
   comp <- get_component(built$catalogue, comps[[role]])
   label <- if (comps[[role]] == id) paste0(tools::toTitleCase(role), " (itself)") else tools::toTitleCase(role)

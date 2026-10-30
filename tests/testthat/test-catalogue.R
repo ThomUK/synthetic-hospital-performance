@@ -2,19 +2,19 @@ test_that("the shipped catalogue is valid and well formed", {
   cat <- read_catalogue()
   expect_s3_class(cat, "fhperf_catalogue")
   expect_true(validate_catalogue(cat))
-  expect_gte(length(metric_ids(cat)), 10)
+  expect_gte(length(indicator_ids(cat)), 10)
   expect_equal(domain_codes(cat), c("ed", "apc", "op", "rtt", "diag"))
-  ids <- c(metric_ids(cat), component_ids(cat))
+  ids <- c(indicator_ids(cat), component_ids(cat))
   expect_true(all(grepl("^[a-z]+_[0-9]{3}$", ids)))
   expect_true(all(id_domain(ids) %in% domain_codes(cat)))
-  tab <- metric_table(cat)
-  expect_equal(nrow(tab), length(metric_ids(cat)))
+  tab <- indicator_table(cat)
+  expect_equal(nrow(tab), length(indicator_ids(cat)))
   expect_true(all(is.na(tab$denominator[tab$type == "count"])))
   expect_true(all(!is.na(tab$denominator[tab$type != "count"])))
   expect_true(all(tab$improvement_direction %in% c("increase", "decrease", "neutral")))
   expect_true(all(tab$domain_title != tab$domain))
   # shared ids are exactly the self-numerator counts
-  shared <- intersect(metric_ids(cat), component_ids(cat))
+  shared <- intersect(indicator_ids(cat), component_ids(cat))
   expect_equal(sort(shared), sort(tab$id[tab$type == "count" & tab$numerator == tab$id]))
   expect_true(length(shared) >= 2)
   ctab <- component_table(cat)
@@ -35,53 +35,53 @@ test_that("every component's SQL can be read and mentions event_date", {
   }
 })
 
-test_that("defaults are filled in by get_metric and get_component", {
+test_that("defaults are filled in by get_indicator and get_component", {
   cat <- read_catalogue()
-  m <- get_metric(cat, "ed_003")
+  m <- get_indicator(cat, "ed_003")
   expect_equal(m$multiplier, 100)
   expect_equal(m$divisor, 1)
   expect_equal(m$grain, "month")
-  expect_equal(metric_components(m), c(numerator = "ed_002", denominator = "ed_001"))
-  los <- get_metric(cat, "apc_004")
+  expect_equal(indicator_components(m), c(numerator = "ed_002", denominator = "ed_001"))
+  los <- get_indicator(cat, "apc_004")
   expect_equal(los$multiplier, 1)
   expect_equal(los$divisor, 1440)
-  cnt <- get_metric(cat, "ed_001")
-  expect_equal(metric_components(cnt), c(numerator = "ed_001"))
+  cnt <- get_indicator(cat, "ed_001")
+  expect_equal(indicator_components(cnt), c(numerator = "ed_001"))
   expect_equal(get_component(cat, "ed_001")$sql, "ed_001.sql")
   expect_equal(id_domain(c("ed_001", "diag_002")), c("ed", "diag"))
-  expect_error(get_metric(cat, "nope"), "No metric")
+  expect_error(get_indicator(cat, "nope"), "No indicator")
   expect_error(get_component(cat, "nope"), "No component")
 })
 
 test_that("a valid toy catalogue reads", {
   ev <- count_component("t_001")
   dir <- write_catalogue(
-    metrics = list(
+    indicators = list(
       list(id = "t_001", title = "self count", type = "count"),
-      toy_metric("t_002", "count", "t_001"),
-      toy_metric("u_001", "percentage", "t_001", "t_001")
+      toy_indicator("t_002", "count", "t_001"),
+      toy_indicator("u_001", "percentage", "t_001", "t_001")
     ),
     components = list(ev$component), sql = ev$sql
   )
   cat <- read_catalogue(dir)
-  expect_equal(metric_ids(cat), c("t_001", "t_002", "u_001"))
+  expect_equal(indicator_ids(cat), c("t_001", "t_002", "u_001"))
   expect_equal(component_ids(cat), "t_001")
-  expect_equal(get_metric(cat, "t_001")$numerator, "t_001")
-  expect_equal(metric_table(cat)$numerator, c("t_001", "t_001", "t_001"))
+  expect_equal(get_indicator(cat, "t_001")$numerator, "t_001")
+  expect_equal(indicator_table(cat)$numerator, c("t_001", "t_001", "t_001"))
 })
 
 test_that("validation reports every problem at once", {
   ev <- count_component("t_001")
   dir <- write_catalogue(
-    metrics = list(
-      toy_metric("t_010", "count", "t_001", "t_001"),
-      toy_metric("t_011", "rate", "t_001"),
-      toy_metric("t_012", "percentage", "t_900", "t_901", grain = "fortnight", improvement_direction = "up", target = "high", multiplier = -1),
-      toy_metric("t_013", "count", "t_001", colour = "red"),
-      toy_metric("t_001", "percentage", "t_001", "t_001"),
+    indicators = list(
+      toy_indicator("t_010", "count", "t_001", "t_001"),
+      toy_indicator("t_011", "rate", "t_001"),
+      toy_indicator("t_012", "percentage", "t_900", "t_901", grain = "fortnight", improvement_direction = "up", target = "high", multiplier = -1),
+      toy_indicator("t_013", "count", "t_001", colour = "red"),
+      toy_indicator("t_001", "percentage", "t_001", "t_001"),
       list(id = "t_014", title = "orphan count", type = "count"),
-      toy_metric("count_with_words", "count", "t_001"),
-      toy_metric("zz_001", "count", "t_001")
+      toy_indicator("count_with_words", "count", "t_001"),
+      toy_indicator("zz_001", "count", "t_001")
     ),
     components = list(ev$component, list(id = "t_020", title = "x", aggregate = "max", extra = 1)),
     sql = ev$sql
@@ -96,7 +96,7 @@ test_that("validation reports every problem at once", {
   expect_match(err, "target must be a single number")
   expect_match(err, "multiplier must be positive")
   expect_match(err, "t_013': unknown field\\(s\\) colour")
-  expect_match(err, "id used by both a metric and a component: t_001 \\(only a count")
+  expect_match(err, "id used by both a indicator and a component: t_001 \\(only a count")
   expect_match(err, "t_014': a count with no numerator needs a component with the same id")
   expect_match(err, "id 'count_with_words' is not <domain>_<nnn>")
   expect_match(err, "id 'zz_001' has a domain that is not in domains.yaml \\(known: t, u\\)")
@@ -105,7 +105,7 @@ test_that("validation reports every problem at once", {
   expect_match(err, "t_020': SQL file not found")
   # the broken catalogue can still be inspected
   expect_silent(cat <- read_catalogue(dir, validate = FALSE))
-  expect_equal(length(cat$metrics), 8)
+  expect_equal(length(cat$indicators), 8)
 })
 
 test_that("domains.yaml is checked", {

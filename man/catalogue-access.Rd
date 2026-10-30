@@ -2,17 +2,17 @@
 % Please edit documentation in R/catalogue.R
 \name{catalogue-access}
 \alias{catalogue-access}
-\alias{metric_ids}
+\alias{indicator_ids}
 \alias{component_ids}
 \alias{domain_codes}
 \alias{id_domain}
-\alias{get_metric}
+\alias{get_indicator}
 \alias{get_component}
 \alias{component_sql}
-\alias{metric_components}
-\title{Ids, metrics and components of a catalogue}
+\alias{indicator_components}
+\title{Ids, indicators and components of a catalogue}
 \usage{
-metric_ids(cat)
+indicator_ids(cat)
 
 component_ids(cat)
 
@@ -20,31 +20,31 @@ domain_codes(cat)
 
 id_domain(id)
 
-get_metric(cat, id)
+get_indicator(cat, id)
 
 get_component(cat, id)
 
 component_sql(cat, id)
 
-metric_components(metric)
+indicator_components(indicator)
 }
 \arguments{
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 
-\item{id}{A metric or component id.}
+\item{id}{A indicator or component id.}
 
-\item{metric}{A metric from \code{\link[=get_metric]{get_metric()}}.}
+\item{indicator}{A indicator from \code{\link[=get_indicator]{get_indicator()}}.}
 }
 \value{
-\code{metric_ids()}, \code{component_ids()} and \code{domain_codes()} return
+\code{indicator_ids()}, \code{component_ids()} and \code{domain_codes()} return
 character vectors; \code{id_domain()} returns the domain code of each id;
-\code{get_metric()} and \code{get_component()} return the parsed YAML as a list,
+\code{get_indicator()} and \code{get_component()} return the parsed YAML as a list,
 with defaults filled in (\code{multiplier}, \code{divisor}, \code{grain}, \code{sql}, and
-for a count metric with no \code{numerator}, the metric's own id);
+for a count indicator with no \code{numerator}, the indicator's own id);
 \code{component_sql()} returns the component's query as a string;
-\code{metric_components()} returns the component ids a metric uses, named
-\code{numerator} and (unless the metric is a count) \code{denominator}.
+\code{indicator_components()} returns the component ids a indicator uses, named
+\code{numerator} and (unless the indicator is a count) \code{denominator}.
 }
 \description{
-Ids, metrics and components of a catalogue
+Ids, indicators and components of a catalogue
 }

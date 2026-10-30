@@ -11,10 +11,10 @@ component_table(cat)
 }
 \value{
 A data frame with \code{id}, \code{domain}, \code{domain_title}, \code{title},
-\code{aggregate}, \code{unit}, \code{source}, \code{sql} and \code{used_by} (metric ids,
+\code{aggregate}, \code{unit}, \code{source}, \code{sql} and \code{used_by} (indicator ids,
 comma-separated, each suffixed with its role).
 }
 \description{
-One row per component with its domain, aggregate, source and the metrics
+One row per component with its domain, aggregate, source and the indicators
 that use it, so reuse is visible.
 }

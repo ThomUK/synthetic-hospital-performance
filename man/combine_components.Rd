@@ -2,20 +2,20 @@
 % Please edit documentation in R/metrics.R
 \name{combine_components}
 \alias{combine_components}
-\title{Combine aggregated components into a metric series}
+\title{Combine aggregated components into a indicator series}
 \usage{
-combine_components(numerator, denominator = NULL, metric)
+combine_components(numerator, denominator = NULL, indicator)
 }
 \arguments{
 \item{numerator, denominator}{Data frames with \code{period} and \code{value}, as
 returned by \code{\link[=aggregate_events]{aggregate_events()}}. \code{denominator} is \code{NULL} for a count.}
 
-\item{metric}{A metric from \code{\link[=get_metric]{get_metric()}}.}
+\item{indicator}{A indicator from \code{\link[=get_indicator]{get_indicator()}}.}
 }
 \value{
-A data frame of class \code{fhperf_metric_data} with \code{period},
+A data frame of class \code{fhperf_indicator_data} with \code{period},
 \code{numerator}, \code{denominator} (\code{NA} for a count) and \code{value}, and the
-metric definition in the attribute \code{metric}.
+indicator definition in the attribute \code{indicator}.
 }
 \description{
 The value of a period is \code{numerator / denominator * multiplier / divisor},
@@ -24,7 +24,7 @@ denominator is zero has value \code{NA}.
 }
 \examples{
 cat <- read_catalogue()
-m <- get_metric(cat, "ed_003")
+m <- get_indicator(cat, "ed_003")
 num <- data.frame(period = as.Date(c("2024-01-01", "2024-02-01")), value = c(90, 80))
 den <- data.frame(period = as.Date(c("2024-01-01", "2024-02-01")), value = c(100, 100))
 combine_components(num, den, m)

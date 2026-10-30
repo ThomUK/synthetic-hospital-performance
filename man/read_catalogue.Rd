@@ -2,27 +2,27 @@
 % Please edit documentation in R/catalogue.R
 \name{read_catalogue}
 \alias{read_catalogue}
-\title{Read a catalogue of metrics and components}
+\title{Read a catalogue of indicators and components}
 \usage{
 read_catalogue(path = fhperf_catalogue_dir(), validate = TRUE)
 }
 \arguments{
-\item{path}{Directory holding \verb{metrics/}, \verb{components/} and \verb{sql/}.
+\item{path}{Directory holding \verb{indicators/}, \verb{components/} and \verb{sql/}.
 Defaults to the catalogue shipped with the package.}
 
 \item{validate}{Run \code{\link[=validate_catalogue]{validate_catalogue()}} on the result? Set to \code{FALSE}
 only to inspect a broken catalogue.}
 }
 \value{
-An object of class \code{fhperf_catalogue}: a list with \code{metrics},
+An object of class \code{fhperf_catalogue}: a list with \code{indicators},
 \code{components} and \code{domains} (each a list named by id or code), \code{sql_dir}
 and \code{path}.
 }
 \description{
-Read a catalogue of metrics and components
+Read a catalogue of indicators and components
 }
 \examples{
 cat <- read_catalogue()
-metric_ids(cat)
-get_metric(cat, "ed_003")
+indicator_ids(cat)
+get_indicator(cat, "ed_003")
 }

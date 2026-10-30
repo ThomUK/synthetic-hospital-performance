@@ -1,18 +1,18 @@
-#' SPC analysis and chart of a metric
+#' SPC analysis and chart of a indicator
 #'
-#' `metric_spc()` runs [NHSRplotthedots::ptd_spc()] on a metric series with
+#' `indicator_spc()` runs [NHSRplotthedots::ptd_spc()] on a indicator series with
 #' the improvement direction, target and rebase dates of its YAML.
-#' `plot_metric()` draws it with [NHSRplotthedots::ptd_create_ggplot()].
+#' `plot_indicator()` draws it with [NHSRplotthedots::ptd_create_ggplot()].
 #' Periods with no value (a zero denominator) are left out of the analysis.
 #'
-#' @param data A metric series from [build_metric()] or [combine_components()].
+#' @param data A indicator series from [build_indicator()] or [combine_components()].
 #' @param ... Passed to [NHSRplotthedots::ptd_create_ggplot()], for example
 #'   `point_size` or `icons_position`.
-#' @return `metric_spc()` returns a `ptd_spc_df`; `plot_metric()` a ggplot.
+#' @return `indicator_spc()` returns a `ptd_spc_df`; `plot_indicator()` a ggplot.
 #' @export
-metric_spc <- function(data) {
-  m <- attr(data, "metric")
-  if (is.null(m)) stop("data has no metric attribute; build it with build_metric() or combine_components()", call. = FALSE)
+indicator_spc <- function(data) {
+  m <- attr(data, "indicator")
+  if (is.null(m)) stop("data has no indicator attribute; build it with build_indicator() or combine_components()", call. = FALSE)
   d <- as.data.frame(data)
   d <- d[!is.na(d$value), , drop = FALSE]
   target <- if (is.null(m$target)) NHSRplotthedots::ptd_target() else m$target
@@ -25,11 +25,11 @@ metric_spc <- function(data) {
   )
 }
 
-#' @rdname metric_spc
+#' @rdname indicator_spc
 #' @export
-plot_metric <- function(data, ...) {
-  m <- attr(data, "metric")
-  spc <- metric_spc(data)
+plot_indicator <- function(data, ...) {
+  m <- attr(data, "indicator")
+  spc <- indicator_spc(data)
   args <- list(
     x = spc,
     main_title = m$title,
@@ -44,18 +44,18 @@ plot_metric <- function(data, ...) {
   do.call(NHSRplotthedots::ptd_create_ggplot, args)
 }
 
-#' Summarise the latest point of a metric
+#' Summarise the latest point of a indicator
 #'
-#' @inheritParams metric_spc
+#' @inheritParams indicator_spc
 #' @return A one-row data frame: `id`, `period`, `value`, `variation` (the
 #'   plot-the-dots point type of the latest period, such as
 #'   `special_cause_improvement`), `mean` (the process mean the latest point
 #'   is judged against), `target` and `assurance` (`pass`, `fail`,
 #'   `inconsistent` or `NA` without a target).
 #' @export
-metric_summary <- function(data) {
-  m <- attr(data, "metric")
-  spc <- as.data.frame(metric_spc(data))
+indicator_summary <- function(data) {
+  m <- attr(data, "indicator")
+  spc <- as.data.frame(indicator_spc(data))
   last <- spc[which.max(spc$x), ]
   assurance <- NA_character_
   if (!is.null(m$target) && nrow(spc) > 0) {

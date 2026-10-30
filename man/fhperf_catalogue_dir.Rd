@@ -10,16 +10,16 @@ fhperf_catalogue_dir()
 A directory path.
 }
 \description{
-The catalogue is three folders and one file: \verb{metrics/} (one YAML per
-metric), \verb{components/} (one YAML per numerator or denominator), \verb{sql/}
+The catalogue is three folders and one file: \verb{indicators/} (one YAML per
+indicator), \verb{components/} (one YAML per numerator or denominator), \verb{sql/}
 (one query per component, named \verb{<component id>.sql} unless the
 component's \code{sql} field says otherwise) and \code{domains.yaml}, the list of
 domain codes that prefix every id.
 }
 \details{
-Every id is \verb{<domain>_<nnn>}, for example \code{ed_003}. Metrics and
+Every id is \verb{<domain>_<nnn>}, for example \code{ed_003}. Indicators and
 components share the numbering within a domain, and the only id that may
-appear in both folders is a count metric whose numerator is itself: such
-a metric omits \code{numerator}, and the component with the same id supplies
+appear in both folders is a count indicator whose numerator is itself: such
+a indicator omits \code{numerator}, and the component with the same id supplies
 the events. So a count is one id and a rate is three.
 }

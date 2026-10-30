@@ -1,6 +1,6 @@
 id: ed_005
 title: ED attendances not ending in admission
 description: ED attendances where the patient was discharged, transferred or left without being admitted, dated by arrival.
-source: derived.ed_001
+source: derived.ed_attendances
 aggregate: count
 unit: attendances

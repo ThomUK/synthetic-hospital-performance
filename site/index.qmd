@@ -1,10 +1,10 @@
 ---
-title: "Metrics"
+title: "Indicators"
 ---
 
 ```{r setup}
 library(fhperf)
-built <- readRDS("_data/metrics.rds")
+built <- readRDS("_data/indicators.rds")
 tab <- merge(built$table, built$summaries[, setdiff(names(built$summaries), "target")], by = "id", sort = FALSE)
 tab <- tab[order(match(tab$domain, domain_codes(built$catalogue)), tab$id), ]
 ```
@@ -13,11 +13,11 @@ Statistical process control charts for the
 [Fake NHS Trust synthetic hospital dataset](https://thomuk.github.io/synthetic-hospital-data/),
 built from the **`r built$scale`** set covering
 `r format(built$window[1], "%B %Y")` to `r format(built$window[2], "%B %Y")`.
-Each metric is defined by one or two components, each a SQL query that
+Each indicator is defined by one or two components, each a SQL query that
 returns one row per event; the package counts or sums them by month and
 plots the result with
 [NHSRplotthedots](https://nhs-r-community.github.io/NHSRplotthedots/).
-The [index](catalogue.qmd) lists every metric with its numerator and
+The [index](catalogue.qmd) lists every indicator with its numerator and
 denominator ids; [how it works](about.qmd) explains the structure.
 
 ```{r table}
@@ -28,12 +28,12 @@ for (dom in unique(tab$domain)) {
   cat("\n## ", rows$domain_title[1], " (`", dom, "`)\n\n", sep = "")
   out <- data.frame(
     Id = sprintf("`%s`", rows$id),
-    Metric = sprintf("[%s](metrics/%s.qmd)", rows$title, rows$id),
+    Indicator = sprintf("[%s](indicators/%s.qmd)", rows$title, rows$id),
     Type = rows$type,
     Latest = format(rows$period, "%b %Y"),
-    Value = mapply(function(v, id) format_value(v, get_metric(built$catalogue, id)), rows$value, rows$id),
+    Value = mapply(function(v, id) format_value(v, get_indicator(built$catalogue, id)), rows$value, rows$id),
     Variation = icon(rows$variation),
-    Target = ifelse(is.na(rows$target), "", mapply(function(v, id) format_value(v, get_metric(built$catalogue, id)), rows$target, rows$id)),
+    Target = ifelse(is.na(rows$target), "", mapply(function(v, id) format_value(v, get_indicator(built$catalogue, id)), rows$target, rows$id)),
     Assurance = ifelse(is.na(rows$assurance), "", rows$assurance),
     check.names = FALSE
   )
@@ -47,7 +47,7 @@ for (dom in unique(tab$domain)) {
 #| results: asis
 for (id in tab$id) {
   cat("\n### ", built$table$title[built$table$id == id], " (`", id, "`) {.unnumbered}\n\n", sep = "")
-  print(plot_metric(built$metrics[[id]], icons_size = 6))
+  print(plot_indicator(built$indicators[[id]], icons_size = 6))
   cat("\n")
 }
 ```

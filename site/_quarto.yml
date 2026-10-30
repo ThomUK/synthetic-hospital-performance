@@ -6,7 +6,7 @@ project:
     - index.qmd
     - catalogue.qmd
     - about.qmd
-    - metrics/*.qmd
+    - indicators/*.qmd
 
 website:
   title: "Fake NHS Trust performance"
@@ -14,7 +14,7 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Metrics
+        text: Indicators
       - href: catalogue.qmd
         text: Index
       - href: about.qmd

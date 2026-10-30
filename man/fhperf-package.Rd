@@ -4,9 +4,9 @@
 \name{fhperf-package}
 \alias{fhperf}
 \alias{fhperf-package}
-\title{fhperf: Performance Metrics and SPC Charts for the Fake NHS Trust}
+\title{fhperf: Performance Indicators and SPC Charts for the Fake NHS Trust}
 \description{
-A catalogue of performance metrics for the Fake NHS Trust synthetic hospital dataset. Each metric is a YAML file that composes one or two components; each component is a YAML file plus a SQL query that returns one row per event. The package reads the events, aggregates them into numerators and denominators by period, and shapes the result for 'NHSRplotthedots' SPC charts. A Quarto site in site/ renders every metric.
+A catalogue of performance indicators for the Fake NHS Trust synthetic hospital dataset. Each indicator is a YAML file that composes one or two components; each component is a YAML file plus a SQL query that returns one row per event. The package reads the events, aggregates them into numerators and denominators by period, and shapes the result for 'NHSRplotthedots' SPC charts. A Quarto site in site/ renders every indicator.
 }
 \seealso{
 Useful links:

@@ -1,4 +1,4 @@
-# The domains that prefix every metric and component id. Each domain is
+# The domains that prefix every indicator and component id. Each domain is
 # expected to be curated by one subject matter expert group, so a new id
 # takes the prefix of the group that will own it and the next free number.
 - code: ed

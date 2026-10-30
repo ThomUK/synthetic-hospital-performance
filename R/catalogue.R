@@ -1,15 +1,15 @@
 #' The catalogue directory shipped with the package
 #'
-#' The catalogue is three folders and one file: `metrics/` (one YAML per
-#' metric), `components/` (one YAML per numerator or denominator), `sql/`
+#' The catalogue is three folders and one file: `indicators/` (one YAML per
+#' indicator), `components/` (one YAML per numerator or denominator), `sql/`
 #' (one query per component, named `<component id>.sql` unless the
 #' component's `sql` field says otherwise) and `domains.yaml`, the list of
 #' domain codes that prefix every id.
 #'
-#' Every id is `<domain>_<nnn>`, for example `ed_003`. Metrics and
+#' Every id is `<domain>_<nnn>`, for example `ed_003`. Indicators and
 #' components share the numbering within a domain, and the only id that may
-#' appear in both folders is a count metric whose numerator is itself: such
-#' a metric omits `numerator`, and the component with the same id supplies
+#' appear in both folders is a count indicator whose numerator is itself: such
+#' a indicator omits `numerator`, and the component with the same id supplies
 #' the events. So a count is one id and a rate is three.
 #'
 #' @return A directory path.
@@ -18,25 +18,25 @@ fhperf_catalogue_dir <- function() {
   system.file(package = "fhperf")
 }
 
-#' Read a catalogue of metrics and components
+#' Read a catalogue of indicators and components
 #'
-#' @param path Directory holding `metrics/`, `components/` and `sql/`.
+#' @param path Directory holding `indicators/`, `components/` and `sql/`.
 #'   Defaults to the catalogue shipped with the package.
 #' @param validate Run [validate_catalogue()] on the result? Set to `FALSE`
 #'   only to inspect a broken catalogue.
-#' @return An object of class `fhperf_catalogue`: a list with `metrics`,
+#' @return An object of class `fhperf_catalogue`: a list with `indicators`,
 #'   `components` and `domains` (each a list named by id or code), `sql_dir`
 #'   and `path`.
 #' @examples
 #' cat <- read_catalogue()
-#' metric_ids(cat)
-#' get_metric(cat, "ed_003")
+#' indicator_ids(cat)
+#' get_indicator(cat, "ed_003")
 #' @export
 read_catalogue <- function(path = fhperf_catalogue_dir(), validate = TRUE) {
   if (!dir.exists(path)) stop("Catalogue directory does not exist: ", path, call. = FALSE)
   cat <- structure(
     list(
-      metrics = read_yaml_dir(file.path(path, "metrics")),
+      indicators = read_yaml_dir(file.path(path, "indicators")),
       components = read_yaml_dir(file.path(path, "components")),
       domains = read_domains(file.path(path, "domains.yaml")),
       sql_dir = file.path(path, "sql"),
@@ -80,27 +80,27 @@ read_domains <- function(file) {
 
 #' @export
 print.fhperf_catalogue <- function(x, ...) {
-  cat("<fhperf_catalogue> ", length(x$metrics), " metrics, ", length(x$components), " components, ",
+  cat("<fhperf_catalogue> ", length(x$indicators), " indicators, ", length(x$components), " components, ",
       length(x$domains), " domains\n", sep = "")
   cat("  ", x$path, "\n", sep = "")
   invisible(x)
 }
 
-#' Ids, metrics and components of a catalogue
+#' Ids, indicators and components of a catalogue
 #'
 #' @param cat A catalogue from [read_catalogue()].
-#' @param id A metric or component id.
-#' @return `metric_ids()`, `component_ids()` and `domain_codes()` return
+#' @param id A indicator or component id.
+#' @return `indicator_ids()`, `component_ids()` and `domain_codes()` return
 #'   character vectors; `id_domain()` returns the domain code of each id;
-#'   `get_metric()` and `get_component()` return the parsed YAML as a list,
+#'   `get_indicator()` and `get_component()` return the parsed YAML as a list,
 #'   with defaults filled in (`multiplier`, `divisor`, `grain`, `sql`, and
-#'   for a count metric with no `numerator`, the metric's own id);
+#'   for a count indicator with no `numerator`, the indicator's own id);
 #'   `component_sql()` returns the component's query as a string;
-#'   `metric_components()` returns the component ids a metric uses, named
-#'   `numerator` and (unless the metric is a count) `denominator`.
+#'   `indicator_components()` returns the component ids a indicator uses, named
+#'   `numerator` and (unless the indicator is a count) `denominator`.
 #' @name catalogue-access
 #' @export
-metric_ids <- function(cat) names(cat$metrics)
+indicator_ids <- function(cat) names(cat$indicators)
 
 #' @rdname catalogue-access
 #' @export
@@ -116,9 +116,9 @@ id_domain <- function(id) sub(id_pattern, "\\1", id)
 
 #' @rdname catalogue-access
 #' @export
-get_metric <- function(cat, id) {
-  m <- cat$metrics[[id]]
-  if (is.null(m)) stop("No metric with id '", id, "'", call. = FALSE)
+get_indicator <- function(cat, id) {
+  m <- cat$indicators[[id]]
+  if (is.null(m)) stop("No indicator with id '", id, "'", call. = FALSE)
   if (identical(m$type, "count")) m$numerator <- m$numerator %||% id
   m$multiplier <- m$multiplier %||% unname(default_multipliers[m$type])
   m$divisor <- m$divisor %||% 1
@@ -146,25 +146,25 @@ component_sql <- function(cat, id) {
 }
 
 #' @rdname catalogue-access
-#' @param metric A metric from [get_metric()].
+#' @param indicator A indicator from [get_indicator()].
 #' @export
-metric_components <- function(metric) {
-  out <- c(numerator = metric$numerator)
-  if (!is.null(metric$denominator)) out <- c(out, denominator = metric$denominator)
+indicator_components <- function(indicator) {
+  out <- c(numerator = indicator$numerator)
+  if (!is.null(indicator$denominator)) out <- c(out, denominator = indicator$denominator)
   out
 }
 
-#' Metrics of a catalogue as a data frame
+#' Indicators of a catalogue as a data frame
 #'
-#' One row per metric with the scalar fields of its YAML, convenient for an
+#' One row per indicator with the scalar fields of its YAML, convenient for an
 #' index page or for mapping a pipeline over.
 #'
 #' @inheritParams catalogue-access
 #' @return A data frame.
 #' @export
-metric_table <- function(cat) {
-  rows <- lapply(metric_ids(cat), function(id) {
-    m <- get_metric(cat, id)
+indicator_table <- function(cat) {
+  rows <- lapply(indicator_ids(cat), function(id) {
+    m <- get_indicator(cat, id)
     d <- id_domain(id)
     data.frame(
       id = id, domain = d, domain_title = cat$domains[[d]]$title %||% d,
@@ -181,17 +181,17 @@ metric_table <- function(cat) {
 
 #' Components of a catalogue as a data frame
 #'
-#' One row per component with its domain, aggregate, source and the metrics
+#' One row per component with its domain, aggregate, source and the indicators
 #' that use it, so reuse is visible.
 #'
 #' @inheritParams catalogue-access
 #' @return A data frame with `id`, `domain`, `domain_title`, `title`,
-#'   `aggregate`, `unit`, `source`, `sql` and `used_by` (metric ids,
+#'   `aggregate`, `unit`, `source`, `sql` and `used_by` (indicator ids,
 #'   comma-separated, each suffixed with its role).
 #' @export
 component_table <- function(cat) {
-  uses <- lapply(metric_ids(cat), function(id) {
-    comps <- metric_components(get_metric(cat, id))
+  uses <- lapply(indicator_ids(cat), function(id) {
+    comps <- indicator_components(get_indicator(cat, id))
     data.frame(component = unname(comps), use = paste0(id, " (", names(comps), ")"), stringsAsFactors = FALSE)
   })
   uses <- do.call(rbind, c(uses, list(make.row.names = FALSE)))
@@ -215,18 +215,18 @@ component_table <- function(cat) {
 #' `<domain>_<nnn>` or whose domain is not in `domains.yaml`, unknown
 #' fields, missing required fields, illegal values, references to
 #' components that do not exist, missing SQL files, a denominator on a count
-#' metric or none on any other, and an id used by both a metric and a
-#' component unless the metric is a count whose numerator is itself.
+#' indicator or none on any other, and an id used by both a indicator and a
+#' component unless the indicator is a count whose numerator is itself.
 #'
 #' @inheritParams catalogue-access
 #' @return `TRUE`, invisibly, or an error listing every problem.
 #' @export
 validate_catalogue <- function(cat) {
-  problems <- c(check_ids(cat), check_components(cat), check_metrics(cat))
-  for (id in intersect(metric_ids(cat), component_ids(cat))) {
-    m <- cat$metrics[[id]]
+  problems <- c(check_ids(cat), check_components(cat), check_indicators(cat))
+  for (id in intersect(indicator_ids(cat), component_ids(cat))) {
+    m <- cat$indicators[[id]]
     self <- identical(m$type, "count") && (is.null(m$numerator) || identical(m$numerator, id))
-    if (!self) problems <- c(problems, paste0("id used by both a metric and a component: ", id, " (only a count whose numerator is itself may share its id)"))
+    if (!self) problems <- c(problems, paste0("id used by both a indicator and a component: ", id, " (only a count whose numerator is itself may share its id)"))
   }
   if (length(problems) > 0) {
     stop("Invalid catalogue:\n", paste0("  - ", problems, collapse = "\n"), call. = FALSE)
@@ -235,7 +235,7 @@ validate_catalogue <- function(cat) {
 }
 
 check_ids <- function(cat) {
-  ids <- c(metric_ids(cat), component_ids(cat))
+  ids <- c(indicator_ids(cat), component_ids(cat))
   bad <- ids[!grepl(id_pattern, ids)]
   p <- if (length(bad) > 0) paste0("id '", unique(bad), "' is not <domain>_<nnn>, for example ed_001") else character()
   ok <- setdiff(ids, bad)
@@ -263,11 +263,11 @@ check_components <- function(cat) {
   }), use.names = FALSE)
 }
 
-check_metrics <- function(cat) {
-  unlist(lapply(cat$metrics, function(m) {
+check_indicators <- function(cat) {
+  unlist(lapply(cat$indicators, function(m) {
     p <- character()
-    where <- paste0("metric '", m$id, "'")
-    extra <- setdiff(names(m), c(metric_fields, "file"))
+    where <- paste0("indicator '", m$id, "'")
+    extra <- setdiff(names(m), c(indicator_fields, "file"))
     if (length(extra) > 0) p <- c(p, paste0(where, ": unknown field(s) ", paste(extra, collapse = ", ")))
     for (f in c("title", "type")) if (is.null(m[[f]])) p <- c(p, paste0(where, ": missing ", f))
     if (is.null(m$numerator)) {
@@ -277,8 +277,8 @@ check_metrics <- function(cat) {
         p <- c(p, paste0(where, ": a count with no numerator needs a component with the same id"))
       }
     }
-    if (!is.null(m$type) && !m$type %in% metric_types) {
-      p <- c(p, paste0(where, ": type must be one of ", paste(metric_types, collapse = ", ")))
+    if (!is.null(m$type) && !m$type %in% indicator_types) {
+      p <- c(p, paste0(where, ": type must be one of ", paste(indicator_types, collapse = ", ")))
     }
     if (!is.null(m$numerator) && is.null(cat$components[[m$numerator]])) {
       p <- c(p, paste0(where, ": numerator component '", m$numerator, "' does not exist"))

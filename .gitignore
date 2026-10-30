@@ -5,8 +5,8 @@
 *.Rproj
 /site/_site/
 /site/_data/
-/site/metrics/*.qmd
+/site/indicators/*.qmd
 /site/.quarto/
 /site/*_files/
-/site/metrics/*_files/
+/site/indicators/*_files/
 /_targets/
