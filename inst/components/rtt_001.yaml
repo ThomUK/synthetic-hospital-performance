@@ -4,3 +4,4 @@ description: A snapshot component. One row per referral-to-treatment pathway ope
 source: derived.rtt_pathways
 aggregate: count
 unit: pathways
+dimensions: [specialty]

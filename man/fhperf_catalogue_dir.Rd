@@ -13,8 +13,9 @@ A directory path.
 The catalogue is three folders and one file: \verb{indicators/} (one YAML per
 indicator), \verb{components/} (one YAML per numerator or denominator), \verb{sql/}
 (one query per component, named \verb{<component id>.sql} unless the
-component's \code{sql} field says otherwise) and \code{domains.yaml}, the list of
-domain codes that prefix every id.
+component's \code{sql} field says otherwise), \code{domains.yaml}, the list of
+domain codes that prefix every id, and \code{dimensions.yaml}, the dimensions
+a component may carry (see \code{\link[=indicator_breakdowns]{indicator_breakdowns()}}).
 }
 \details{
 Every id is \verb{<domain>_<nnn>}, for example \code{ed_003}. Indicators and

@@ -3,8 +3,9 @@
 #' The catalogue is three folders and one file: `indicators/` (one YAML per
 #' indicator), `components/` (one YAML per numerator or denominator), `sql/`
 #' (one query per component, named `<component id>.sql` unless the
-#' component's `sql` field says otherwise) and `domains.yaml`, the list of
-#' domain codes that prefix every id.
+#' component's `sql` field says otherwise), `domains.yaml`, the list of
+#' domain codes that prefix every id, and `dimensions.yaml`, the dimensions
+#' a component may carry (see [indicator_breakdowns()]).
 #'
 #' Every id is `<domain>_<nnn>`, for example `ed_003`. Indicators and
 #' components share the numbering within a domain, and the only id that may
@@ -39,6 +40,7 @@ read_catalogue <- function(path = fhperf_catalogue_dir(), validate = TRUE) {
       indicators = read_yaml_dir(file.path(path, "indicators")),
       components = read_yaml_dir(file.path(path, "components")),
       domains = read_domains(file.path(path, "domains.yaml")),
+      dimensions = read_dimensions(file.path(path, "dimensions.yaml")),
       sql_dir = file.path(path, "sql"),
       path = path
     ),
@@ -78,10 +80,23 @@ read_domains <- function(file) {
   x
 }
 
+# Read dimensions.yaml into a list named by id.
+read_dimensions <- function(file) {
+  if (!file.exists(file)) return(list())
+  x <- yaml::read_yaml(file)
+  if (length(x) == 0) return(list())
+  ids <- vapply(x, function(d) as.character(d$id %||% NA_character_), character(1))
+  if (anyNA(ids)) stop("Every dimension in ", file, " needs an id", call. = FALSE)
+  if (anyDuplicated(ids)) stop("Duplicate dimension id in ", file, ": ", ids[duplicated(ids)][1], call. = FALSE)
+  for (d in x) if (is.null(d$title)) stop("Dimension '", d$id, "' in ", file, " needs a title", call. = FALSE)
+  names(x) <- ids
+  x
+}
+
 #' @export
 print.fhperf_catalogue <- function(x, ...) {
   cat("<fhperf_catalogue> ", length(x$indicators), " indicators, ", length(x$components), " components, ",
-      length(x$domains), " domains\n", sep = "")
+      length(x$domains), " domains, ", length(x$dimensions), " dimensions\n", sep = "")
   cat("  ", x$path, "\n", sep = "")
   invisible(x)
 }
@@ -112,6 +127,18 @@ domain_codes <- function(cat) names(cat$domains)
 
 #' @rdname catalogue-access
 #' @export
+dimension_ids <- function(cat) names(cat$dimensions)
+
+#' @rdname catalogue-access
+#' @export
+get_dimension <- function(cat, id) {
+  d <- cat$dimensions[[id]]
+  if (is.null(d)) stop("No dimension with id '", id, "'", call. = FALSE)
+  d
+}
+
+#' @rdname catalogue-access
+#' @export
 id_domain <- function(id) sub(id_pattern, "\\1", id)
 
 #' @rdname catalogue-access
@@ -133,7 +160,26 @@ get_component <- function(cat, id) {
   x <- cat$components[[id]]
   if (is.null(x)) stop("No component with id '", id, "'", call. = FALSE)
   x$sql <- x$sql %||% paste0(id, ".sql")
+  x$dimensions <- as.character(unlist(x$dimensions))
   x
+}
+
+#' The dimensions an indicator can be broken down by
+#'
+#' A breakdown splits every component of the indicator by one dimension and
+#' recomputes the series per group, so a dimension is available only when
+#' all of the indicator's components carry it. An indicator's YAML may
+#' narrow the choice with a `breakdowns` list; by default every shared
+#' dimension is offered.
+#'
+#' @inheritParams catalogue-access
+#' @return A character vector of dimension ids, possibly empty.
+#' @export
+indicator_breakdowns <- function(cat, id) {
+  ind <- get_indicator(cat, id)
+  shared <- Reduce(intersect, lapply(indicator_components(ind), function(c) get_component(cat, c)$dimensions))
+  if (!is.null(ind$breakdowns)) return(intersect(as.character(unlist(ind$breakdowns)), shared))
+  shared
 }
 
 #' @rdname catalogue-access
@@ -173,6 +219,7 @@ indicator_table <- function(cat) {
       grain = m$grain, unit = m$unit %||% NA_character_,
       improvement_direction = m$improvement_direction,
       target = as.numeric(m$target %||% NA_real_),
+      breakdowns = paste(indicator_breakdowns(cat, id), collapse = ", "),
       stringsAsFactors = FALSE
     )
   })
@@ -202,6 +249,7 @@ component_table <- function(cat) {
       id = id, domain = d, domain_title = cat$domains[[d]]$title %||% d,
       title = x$title, aggregate = x$aggregate, unit = x$unit %||% NA_character_,
       source = x$source %||% NA_character_, sql = x$sql,
+      dimensions = paste(x$dimensions, collapse = ", "),
       used_by = paste(uses$use[uses$component == id], collapse = ", "),
       stringsAsFactors = FALSE
     )
@@ -259,6 +307,9 @@ check_components <- function(cat) {
     }
     sql <- file.path(cat$sql_dir, x$sql %||% paste0(x$id, ".sql"))
     if (!file.exists(sql)) p <- c(p, paste0(where, ": SQL file not found: ", basename(sql)))
+    dims <- as.character(unlist(x$dimensions))
+    unknown <- setdiff(dims, names(cat$dimensions))
+    if (length(unknown) > 0) p <- c(p, paste0(where, ": dimension(s) not in dimensions.yaml: ", paste(unknown, collapse = ", ")))
     p
   }), use.names = FALSE)
 }
@@ -305,6 +356,13 @@ check_indicators <- function(cat) {
     if (!is.null(m$rebase)) {
       ok <- tryCatch(!anyNA(as.Date(unlist(m$rebase))), error = function(e) FALSE)
       if (!ok) p <- c(p, paste0(where, ": rebase must be a list of dates"))
+    }
+    if (!is.null(m$breakdowns)) {
+      comps <- c(m$numerator %||% if (identical(m$type, "count")) m$id, m$denominator)
+      comps <- comps[comps %in% names(cat$components)]
+      shared <- Reduce(intersect, lapply(comps, function(c) as.character(unlist(cat$components[[c]]$dimensions))), accumulate = FALSE)
+      bad <- setdiff(as.character(unlist(m$breakdowns)), shared %||% character())
+      if (length(bad) > 0) p <- c(p, paste0(where, ": breakdown(s) not carried by every component: ", paste(bad, collapse = ", ")))
     }
     p
   }), use.names = FALSE)

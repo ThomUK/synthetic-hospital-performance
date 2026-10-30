@@ -6,3 +6,13 @@ table code {
   word-break: normal !important;
   overflow-wrap: normal !important;
 }
+
+/* Breakdowns: one chart block per group, shown by the selector. */
+.breakdown .group-chart { display: none; }
+.breakdown .group-chart.active { display: block; }
+.breakdown-table td.num, .breakdown-table th.num { text-align: right; }
+.breakdown-table tr[data-group] { cursor: pointer; }
+.breakdown-table tr[data-group].selected td { background: #e8f0fb; }
+.breakdown-table svg { vertical-align: middle; }
+.group-label { display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; }
+.group-label .form-select { width: auto; }

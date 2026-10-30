@@ -50,6 +50,58 @@ knitr::kable(latest)
 ```
 :::
 
+## Breakdowns
+
+```{r breakdowns}
+#| results: asis
+#| fig-height: 4
+bd <- built$breakdowns[[id]]
+if (length(bd) == 0) {
+  cat("No breakdown is defined for this indicator: its components share no dimension.\n")
+} else {
+  cat("Each tab splits the indicator by one dimension. The table shows every group's latest point with its ",
+      "plot-the-dots variation and assurance icons, largest group first; pick a group to see its charts. ",
+      "Groups averaging fewer than ", built$min_per_period, " events a period are folded into one 'Other' group.\n\n", sep = "")
+  cat("::::: {.panel-tabset}\n\n")
+  for (dim in names(bd)) {
+    x <- bd[[dim]]
+    s <- built$breakdown_summaries[[id]][[dim]]
+    dim_title <- attr(x, "dimension")$title
+    box <- paste0("bd-", id, "-", dim)
+    cat("### ", dim_title, "\n\n", sep = "")
+    cat(":::: {.breakdown #", box, "}\n\n", sep = "")
+    # summary table
+    cat('<table class="table table-sm breakdown-table">\n<thead><tr><th>', dim_title,
+        '</th><th class="num">Latest</th><th class="num">Value</th><th class="num">Mean</th><th>Variation</th><th>Assurance</th><th class="num">',
+        if (m$type == "count") "Events" else "Denominator", '</th></tr></thead>\n<tbody>\n', sep = "")
+    for (i in seq_len(nrow(s))) {
+      cat(sprintf('<tr data-group="%s"><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td>%s</td><td>%s</td><td class="num">%s</td></tr>\n',
+        s$group[i], s$label[i], format(s$period[i], "%b %Y"), format_value(s$value[i], m), format_value(s$mean[i], m),
+        ptd_icon_svg(s$variation_icon[i], "variation"), ptd_icon_svg(s$assurance_icon[i], "assurance"),
+        formatC(s$size[i], format = "f", digits = 0, big.mark = ",")))
+    }
+    cat("</tbody>\n</table>\n\n")
+    # group selector and one chart block per group
+    cat('<label class="group-label">Show charts for <select class="form-select form-select-sm group-select">\n')
+    for (i in seq_len(nrow(s))) cat(sprintf('<option value="%s">%s</option>\n', s$group[i], s$label[i]))
+    cat("</select></label>\n\n")
+    for (i in seq_len(nrow(s))) {
+      g <- group_series(x, s$group[i])
+      cat("::: {.group-chart", if (i == 1) " .active", " group=\"", s$group[i], "\"}\n\n", sep = "")
+      cat("#### ", s$label[i], "\n\n", sep = "")
+      cat("::: {.panel-tabset}\n\n##### SPC\n\n")
+      print(plot_indicator(g))
+      cat("\n\n##### By financial year\n\n")
+      print(plot_indicator_seasons(g))
+      cat("\n\n:::\n\n")
+      cat(":::\n\n")
+    }
+    cat("::::\n\n")
+  }
+  cat(":::::\n\n")
+}
+```
+
 ## Definition
 
 ```{r definition}

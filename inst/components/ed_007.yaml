@@ -4,3 +4,4 @@ description: Minutes from arrival to departure for ED attendances that did not e
 source: derived.ed_attendances
 aggregate: sum
 unit: minutes
+dimensions: [arrival_mode]

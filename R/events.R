@@ -13,7 +13,8 @@
 #' cannot be read without a window.
 #'
 #' @param con A `DBI` connection with the dataset attached, for example from
-#'   [perf_connect()].
+#'   [perf_connect()], or a function that takes a SQL string and returns a
+#'   data frame, for a pipeline that supplies its own reader.
 #' @param cat A catalogue from [read_catalogue()].
 #' @param id A component id.
 #' @param window Optional `Date` vector of length two, the first and last
@@ -24,8 +25,13 @@
 read_component_events <- function(con, cat, id, window = NULL) {
   comp <- get_component(cat, id)
   sql <- substitute_window(component_sql(cat, id), window, id)
-  events <- DBI::dbGetQuery(con, sql)
+  events <- run_sql(con, sql)
   check_events(events, comp)
+}
+
+run_sql <- function(con, sql) {
+  if (is.function(con)) return(as.data.frame(con(sql)))
+  DBI::dbGetQuery(con, sql)
 }
 
 substitute_window <- function(sql, window, id) {
@@ -54,6 +60,10 @@ check_events <- function(events, comp) {
   if (identical(comp$aggregate, "sum")) {
     if (!"value" %in% names(events)) stop(where, " sums a value but returned no value column", call. = FALSE)
     if (!is.numeric(events$value)) stop(where, ": value must be numeric", call. = FALSE)
+  }
+  for (dim in comp$dimensions) {
+    if (!dim %in% names(events)) stop(where, " declares dimension '", dim, "' but returned no such column", call. = FALSE)
+    events[[dim]] <- as.character(events[[dim]])
   }
   undated <- is.na(events$event_date)
   if (any(undated)) {

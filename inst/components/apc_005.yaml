@@ -4,3 +4,4 @@ description: Closed, non-day-case spells where the patient did not die in hospit
 source: derived.spells
 aggregate: count
 unit: discharges
+dimensions: [site, specialty]

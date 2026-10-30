@@ -30,6 +30,7 @@ format:
   html:
     theme: cosmo
     css: styles.css
+    include-after-body: _includes/breakdown.html
     toc: true
     code-fold: true
     code-tools: false

@@ -4,3 +4,4 @@ description: Outpatient appointments the patient did not attend (status 3) or ar
 source: derived.op_appointments
 aggregate: count
 unit: appointments
+dimensions: [site, specialty]

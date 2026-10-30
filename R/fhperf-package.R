@@ -2,15 +2,16 @@
 "_PACKAGE"
 
 #' @importFrom rlang %||% .data
+#' @importFrom utils globalVariables
 NULL
 
 # Field names a component YAML may carry. `sql` defaults to `<id>.sql`.
-component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql")
+component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql", "dimensions")
 
 # Field names an indicator YAML may carry.
 indicator_fields <- c(
   "id", "title", "description", "type", "numerator", "denominator",
-  "multiplier", "divisor", "unit", "grain", "improvement_direction", "target", "rebase"
+  "multiplier", "divisor", "unit", "grain", "improvement_direction", "target", "rebase", "breakdowns"
 )
 
 # Every id is a domain code, an underscore and a three-digit number.
@@ -25,4 +26,4 @@ improvement_directions <- c("increase", "decrease", "neutral")
 default_multipliers <- c(count = 1, percentage = 100, rate = 1000, mean = 1)
 
 # Column names passed to NHSRplotthedots::ptd_spc() by bare name in indicator_spc().
-utils::globalVariables(c("value", "period"))
+globalVariables(c("value", "period"))

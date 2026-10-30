@@ -4,3 +4,4 @@ description: Minutes from admission to discharge for the same spells as apc_002 
 source: derived.spells
 aggregate: sum
 unit: minutes
+dimensions: [site, specialty]

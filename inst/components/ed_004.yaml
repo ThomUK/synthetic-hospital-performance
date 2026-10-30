@@ -4,3 +4,4 @@ description: ED attendances where the patient was admitted to a bed, dated by ar
 source: derived.ed_attendances
 aggregate: count
 unit: attendances
+dimensions: [arrival_mode, specialty]

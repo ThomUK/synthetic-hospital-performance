@@ -5,6 +5,8 @@
 \alias{indicator_ids}
 \alias{component_ids}
 \alias{domain_codes}
+\alias{dimension_ids}
+\alias{get_dimension}
 \alias{id_domain}
 \alias{get_indicator}
 \alias{get_component}
@@ -17,6 +19,10 @@ indicator_ids(cat)
 component_ids(cat)
 
 domain_codes(cat)
+
+dimension_ids(cat)
+
+get_dimension(cat, id)
 
 id_domain(id)
 

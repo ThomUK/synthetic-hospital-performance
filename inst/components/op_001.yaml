@@ -4,3 +4,4 @@ description: Outpatient appointments the patient attended (status 5 or 6) or did
 source: derived.op_appointments
 aggregate: count
 unit: appointments
+dimensions: [site, specialty]

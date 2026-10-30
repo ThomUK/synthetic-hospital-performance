@@ -15,13 +15,24 @@ con <- perf_connect(scale, quiet = TRUE)
 on.exit(perf_disconnect(con), add = TRUE)
 
 window <- dataset_window()
-indicators <- build_indicators(con, cat, window = window)
+cache <- new.env()
+indicators <- build_indicators(con, cat, window = window, cache = cache)
 summaries <- do.call(rbind, lapply(indicators, indicator_summary))
+
+# Breakdowns: every indicator by every dimension its components share.
+# Groups averaging fewer than this many events per period fold into "Other".
+min_per_period <- as.numeric(Sys.getenv("FHPERF_MIN_PER_PERIOD", unset = "5"))
+breakdowns <- lapply(indicator_ids(cat), function(id) {
+  build_breakdowns(con, cat, id, window = window, cache = cache, min_per_period = min_per_period)
+})
+names(breakdowns) <- indicator_ids(cat)
+breakdown_summaries <- lapply(breakdowns, function(by_dim) lapply(by_dim, breakdown_summary))
 
 dir.create("_data", showWarnings = FALSE)
 saveRDS(list(
-  built_at = Sys.time(), scale = scale, window = window,
-  catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries
+  built_at = Sys.time(), scale = scale, window = window, min_per_period = min_per_period,
+  catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries,
+  breakdowns = breakdowns, breakdown_summaries = breakdown_summaries
 ), "_data/indicators.rds")
 
 # One page per indicator. Existing generated pages are removed first so that a
@@ -36,4 +47,5 @@ for (id in indicator_ids(cat)) {
   page <- gsub("{{title}}", gsub('"', "'", m$title, fixed = TRUE), page, fixed = TRUE)
   writeLines(page, file.path("indicators", paste0(id, ".qmd")))
 }
-message("Built ", length(indicators), " indicators and wrote ", length(indicator_ids(cat)), " pages")
+n_groups <- sum(unlist(lapply(breakdowns, function(b) vapply(b, function(x) length(unique(x$group)), numeric(1)))))
+message("Built ", length(indicators), " indicators, ", n_groups, " breakdown groups, and wrote ", length(indicator_ids(cat)), " pages")

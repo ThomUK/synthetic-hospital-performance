@@ -8,7 +8,8 @@ aggregate_events(
   events,
   grain = c("month", "week", "day"),
   aggregate = c("count", "sum"),
-  window = NULL
+  window = NULL,
+  by = NULL
 )
 }
 \arguments{
@@ -19,16 +20,20 @@ aggregate_events(
 \item{aggregate}{\code{"count"} or \code{"sum"}.}
 
 \item{window}{Optional \code{Date} vector of length two.}
+
+\item{by}{Optional name of a column of \code{events} to group by.}
 }
 \value{
-A data frame with \code{period} (Date, the first day of the period) and
-\code{value}, ordered by period.
+A data frame with \code{period} (Date, the first day of the period),
+\code{group} (only with \code{by}) and \code{value}, ordered by group and period.
 }
 \description{
 Counts the events, or sums their \code{value}, that fall in each period. With a
 window, events outside it are dropped first and every period of the window
 is present in the result, with \code{0} where nothing happened, so that series
-have no gaps.
+have no gaps. With \code{by}, the events are split by that column first and
+every group gets every period; events with no value in the column form
+an \code{"Unknown"} group, so the groups always add up to the whole.
 }
 \examples{
 ev <- data.frame(event_date = as.Date(c("2024-01-03", "2024-01-20", "2024-03-01")), value = c(10, 20, 5))

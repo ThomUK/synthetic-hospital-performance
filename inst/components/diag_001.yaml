@@ -4,3 +4,4 @@ description: Imaging exams requested from the emergency department (patient sour
 source: derived.imaging_exams
 aggregate: count
 unit: exams
+dimensions: [site]

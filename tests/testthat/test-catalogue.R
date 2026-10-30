@@ -22,7 +22,7 @@ test_that("the shipped catalogue is valid and well formed", {
   expect_match(ctab$used_by[ctab$id == "ed_001"], "ed_001 \\(numerator\\)")
   expect_match(ctab$used_by[ctab$id == "ed_001"], "ed_003 \\(denominator\\)")
   expect_match(ctab$used_by[ctab$id == "ed_001"], "diag_002 \\(denominator\\)")
-  expect_output(print(cat), "5 domains")
+  expect_output(print(cat), "5 domains, 3 dimensions")
 })
 
 test_that("every component's SQL can be read and mentions event_date", {

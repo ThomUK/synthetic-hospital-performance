@@ -21,6 +21,12 @@ each indicator as an NHSRplotthedots SPC chart. Deployed to GitHub Pages from
   returns one row per event with `event_date` and, for `aggregate: sum`,
   `value`. `read_catalogue()` validates everything; keep the validator in
   step with any new field.
+- **Dimensions live in `inst/dimensions.yaml`.** A component lists the
+  ones its SQL returns under `dimensions:`; an indicator's breakdowns are the
+  dimensions all its components share. Breakdowns are views of an indicator,
+  never new ids, and their groups must add up to the whole (the integration
+  test checks this). Site and specialty of a ratio's numerator must be taken
+  from the same record as the denominator's.
 - **Reuse denominators.** Before adding a component, check whether one in
   `inst/components/` already defines the population.
 - **Keep the database out of the pages.** `site/_build.R` is the only

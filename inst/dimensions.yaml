@@ -1,0 +1,12 @@
+# Dimensions a component may carry and an indicator may be broken down by.
+# A component declares `dimensions: [site, specialty]` and its SQL returns a
+# column named after each one, holding a code. `labels` is a query giving
+# `code` and `label` columns; without it the codes are shown as they are.
+- id: site
+  title: Site
+  labels: SELECT site_code AS code, site_name AS label FROM reference.sites
+- id: specialty
+  title: Treatment specialty
+  labels: SELECT tfc AS code, name AS label FROM reference.specialties
+- id: arrival_mode
+  title: Arrival mode

@@ -4,7 +4,8 @@ WITH month_ends AS (
   FROM generate_series(date_trunc('month', {{window_start}}), {{window_end}}, INTERVAL 1 MONTH) AS t(d)
   WHERE last_day(d) <= {{window_end}}
 )
-SELECT m.month_end AS event_date
+SELECT m.month_end AS event_date,
+       p.tretspef AS specialty
 FROM derived.rtt_pathways AS p
 JOIN month_ends AS m
   ON p.rttperstart <= m.month_end

@@ -4,3 +4,4 @@ description: A snapshot component. The open pathways of rtt_001 that had waited 
 source: derived.rtt_pathways
 aggregate: count
 unit: pathways
+dimensions: [specialty]

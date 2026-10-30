@@ -1,6 +1,8 @@
 -- Live discharges followed by an emergency admission within 30 days,
 -- dated by the index discharge (the same date the denominator uses).
-SELECT CAST(d.disdate AS DATE) AS event_date
+SELECT CAST(d.disdate AS DATE) AS event_date,
+       d.sitetret AS site,
+       d.tretspef_last AS specialty
 FROM derived.spells AS d
 WHERE NOT d.open_spell
   AND NOT d.day_case

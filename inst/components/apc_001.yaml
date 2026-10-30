@@ -4,3 +4,4 @@ description: Inpatient spells with an emergency admission method, dated by admis
 source: derived.spells
 aggregate: count
 unit: admissions
+dimensions: [site, specialty]

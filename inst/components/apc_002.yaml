@@ -4,3 +4,4 @@ description: Closed spells that were not day cases, dated by discharge. Spells w
 source: derived.spells
 aggregate: count
 unit: discharges
+dimensions: [site, specialty]

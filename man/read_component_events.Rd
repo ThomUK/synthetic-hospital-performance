@@ -8,7 +8,8 @@ read_component_events(con, cat, id, window = NULL)
 }
 \arguments{
 \item{con}{A \code{DBI} connection with the dataset attached, for example from
-\code{\link[=perf_connect]{perf_connect()}}.}
+\code{\link[=perf_connect]{perf_connect()}}, or a function that takes a SQL string and returns a
+data frame, for a pipeline that supplies its own reader.}
 
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 

@@ -5,13 +5,20 @@
 \alias{build_indicators}
 \title{Build an indicator from the database}
 \usage{
-build_indicator(con, cat, id, window = NULL, cache = new.env())
+build_indicator(con, cat, id, window = NULL, cache = new.env(), by = NULL)
 
-build_indicators(con, cat, ids = indicator_ids(cat), window = NULL)
+build_indicators(
+  con,
+  cat,
+  ids = indicator_ids(cat),
+  window = NULL,
+  cache = new.env()
+)
 }
 \arguments{
 \item{con}{A \code{DBI} connection with the dataset attached, for example from
-\code{\link[=perf_connect]{perf_connect()}}.}
+\code{\link[=perf_connect]{perf_connect()}}, or a function that takes a SQL string and returns a
+data frame, for a pipeline that supplies its own reader.}
 
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 
@@ -21,9 +28,14 @@ build_indicators(con, cat, ids = indicator_ids(cat), window = NULL)
 the series. \code{NULL} uses \code{\link[=dataset_window]{dataset_window()}} if the \code{fakehospdata} package
 can supply it, and otherwise the range of the events themselves.}
 
-\item{cache}{An environment used to share component builds between
-indicators; \code{\link[=build_indicators]{build_indicators()}} passes one so a denominator used by several
-indicators is read once.}
+\item{cache}{An environment in which each component's events are kept
+once read, so a denominator used by several indicators, or by several
+breakdowns of one, is queried once. \code{\link[=build_indicators]{build_indicators()}} and
+\code{\link[=build_breakdowns]{build_breakdowns()}} share one when given it.}
+
+\item{by}{Optional dimension id to break the indicator down by; it must
+be one of \code{\link[=indicator_breakdowns]{indicator_breakdowns()}}. The result then has a \code{group}
+column and the attribute \code{dimension}.}
 
 \item{ids}{Indicator ids to build; default every indicator in the catalogue.}
 }

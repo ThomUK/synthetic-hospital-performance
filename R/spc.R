@@ -13,6 +13,9 @@
 indicator_spc <- function(data) {
   m <- attr(data, "indicator")
   if (is.null(m)) stop("data has no indicator attribute; build it with build_indicator() or combine_components()", call. = FALSE)
+  if ("group" %in% names(data) && length(unique(data$group)) > 1) {
+    stop("data holds several groups; pick one with group_series() first", call. = FALSE)
+  }
   d <- as.data.frame(data)
   d <- d[!is.na(d$value), , drop = FALSE]
   target <- if (is.null(m$target)) NHSRplotthedots::ptd_target() else m$target

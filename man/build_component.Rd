@@ -4,11 +4,12 @@
 \alias{build_component}
 \title{Build one component: read its events and aggregate them}
 \usage{
-build_component(con, cat, id, grain = "month", window = NULL)
+build_component(con, cat, id, grain = "month", window = NULL, by = NULL)
 }
 \arguments{
 \item{con}{A \code{DBI} connection with the dataset attached, for example from
-\code{\link[=perf_connect]{perf_connect()}}.}
+\code{\link[=perf_connect]{perf_connect()}}, or a function that takes a SQL string and returns a
+data frame, for a pipeline that supplies its own reader.}
 
 \item{cat}{A catalogue from \code{\link[=read_catalogue]{read_catalogue()}}.}
 
@@ -17,10 +18,13 @@ build_component(con, cat, id, grain = "month", window = NULL)
 \item{grain}{\code{"month"}, \code{"week"} or \code{"day"}.}
 
 \item{window}{Optional \code{Date} vector of length two; see \code{\link[=aggregate_events]{aggregate_events()}}.}
+
+\item{by}{Optional dimension id the component declares; see
+\code{\link[=aggregate_events]{aggregate_events()}}.}
 }
 \value{
-A data frame with \code{period} and \code{value}, with the component id in
-the attribute \code{component}.
+A data frame with \code{period}, \code{group} (with \code{by}) and \code{value}, with
+the component id in the attribute \code{component}.
 }
 \description{
 Build one component: read its events and aggregate them

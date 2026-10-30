@@ -1,0 +1,25 @@
+<script>
+// Breakdown blocks: a select chooses which group's charts are visible, and
+// clicking a row of the summary table does the same.
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".breakdown").forEach(function (box) {
+    var select = box.querySelector(".group-select");
+    var rows = box.querySelectorAll(".breakdown-table tr[data-group]");
+    var charts = box.querySelectorAll(".group-chart");
+    function show(code) {
+      charts.forEach(function (c) { c.classList.toggle("active", c.getAttribute("data-group") === code); });
+      rows.forEach(function (r) { r.classList.toggle("selected", r.getAttribute("data-group") === code); });
+      if (select && select.value !== code) select.value = code;
+      // charts hidden at render time have no size; nudge any resize-aware content
+      window.dispatchEvent(new Event("resize"));
+    }
+    if (select) {
+      select.addEventListener("change", function () { show(select.value); });
+      show(select.value);
+    }
+    rows.forEach(function (r) {
+      r.addEventListener("click", function () { show(r.getAttribute("data-group")); });
+    });
+  });
+});
+</script>

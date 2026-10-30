@@ -4,3 +4,4 @@ description: ED attendances whose time in department was four hours or less, dat
 source: derived.ed_attendances
 aggregate: count
 unit: attendances
+dimensions: [arrival_mode]

@@ -14,6 +14,12 @@ chart. Nothing in the data is real.
 - A **indicator** is a YAML file naming a numerator, a denominator unless it is
   a count, a type (`count`, `percentage`, `rate`, `mean`), the period grain,
   the improvement direction and optionally a target and rebase dates.
+- A component may declare **dimensions** (`site`, `specialty`, ...), columns
+  its SQL returns with each event; `inst/dimensions.yaml` lists them with a
+  labels query. An indicator can be broken down by any dimension all of its
+  components carry. `build_breakdowns()` computes every group, folds small
+  ones into "Other", and `breakdown_summary()` gives the plot-the-dots
+  summary table; the groups always add up to the whole.
 - Every id is `<domain>_<nnn>`. The domain (`ed`, `apc`, `op`, `rtt`,
   `diag`, listed in `inst/domains.yaml`) names the subject matter expert
   group that owns the definition, and indicators and components share one
@@ -25,7 +31,8 @@ chart. Nothing in the data is real.
 
 ```
 inst/
-  domains.yaml  the domain codes and their owners
+  domains.yaml     the domain codes and their owners
+  dimensions.yaml  the dimensions components may carry
   indicators/      one YAML per indicator          ed_003.yaml   (four-hour performance = ed_002 / ed_001)
   components/   one YAML per component       ed_002.yaml, ed_001.yaml
   sql/          one query per component      ed_002.sql,  ed_001.sql
@@ -52,6 +59,9 @@ x <- build_indicator(con, cat, "ed_003")  # ED four-hour performance
 plot_indicator(x)
 indicator_summary(x)
 all <- build_indicators(con, cat)         # every indicator; shared components read once
+by <- build_breakdowns(con, cat, "apc_004", min_per_period = 5)   # by site and specialty
+breakdown_summary(by$specialty)           # one row per specialty with icons
+plot_indicator(group_series(by$site, "RZ902"))
 perf_disconnect(con)
 ```
 

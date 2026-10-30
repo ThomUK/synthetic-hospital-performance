@@ -56,12 +56,29 @@ for (i in seq_len(nrow(ct))) {
   uses <- strsplit(ct$used_by[i], ", ", fixed = TRUE)[[1]]
   uses <- sub("^([a-z]+_[0-9]{3}) \\((.*)\\)$", '<a href="indicators/\\1.html"><code>\\1</code></a> (\\2)', uses)
   cat(sprintf(
-    '<tr id="%s"><td><code>%s</code></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><code>%s</code></td><td>%s</td></tr>\n',
+    '<tr id="%s"><td><code>%s</code></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><code>%s</code></td><td>%s</td><td>%s</td></tr>\n',
     ct$id[i], ct$id[i], ct$title[i], ct$domain_title[i], ct$aggregate[i],
-    ifelse(is.na(ct$unit[i]), "", ct$unit[i]), ifelse(is.na(ct$source[i]), "", ct$source[i]), paste(uses, collapse = "<br>")
+    ifelse(is.na(ct$unit[i]), "", ct$unit[i]), ifelse(is.na(ct$source[i]), "", ct$source[i]), ct$dimensions[i], paste(uses, collapse = "<br>")
   ))
 }
 cat("</tbody>\n</table>\n")
+```
+
+## Dimensions
+
+A component may carry dimensions, columns its SQL returns alongside the
+events. An indicator can be broken down by any dimension that all of its
+components carry, and each indicator's page shows those breakdowns.
+
+```{r dimensions}
+dims <- do.call(rbind, lapply(dimension_ids(cat), function(d) data.frame(
+  Id = sprintf("`%s`", d), Dimension = cat$dimensions[[d]]$title,
+  Labels = if (is.null(cat$dimensions[[d]]$labels)) "codes as returned" else sprintf("`%s`", cat$dimensions[[d]]$labels),
+  Components = sum(vapply(component_ids(cat), function(c) d %in% get_component(cat, c)$dimensions, logical(1))),
+  Indicators = sum(vapply(indicator_ids(cat), function(i) d %in% indicator_breakdowns(cat, i), logical(1))),
+  check.names = FALSE
+)))
+knitr::kable(dims, row.names = FALSE)
 ```
 
 ## Domains

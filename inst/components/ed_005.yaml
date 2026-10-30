@@ -4,3 +4,4 @@ description: ED attendances where the patient was discharged, transferred or lef
 source: derived.ed_attendances
 aggregate: count
 unit: attendances
+dimensions: [arrival_mode]

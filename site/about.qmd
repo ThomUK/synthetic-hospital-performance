@@ -68,6 +68,19 @@ otherwise. A period whose denominator is zero has no value. Optional fields
 are `target` and `rebase` (a list of dates), which are passed straight to
 `NHSRplotthedots::ptd_spc()`.
 
+## Breakdowns
+
+A component may declare **dimensions**, extra columns its SQL returns with
+each event, such as `site` or `specialty`; the dimensions themselves are
+listed once in `inst/dimensions.yaml`, with a query that turns codes into
+labels. An indicator can be broken down by any dimension that every one of
+its components carries, because a ratio's denominator must be split exactly
+as its numerator is. The breakdown is the same indicator, not a new one:
+every group is computed from the same definitions and the groups add up to
+the trust-wide figure, with events lacking a value shown as "Unknown".
+Small groups fold into "Other". Each indicator page shows a plot-the-dots
+summary table per dimension and the charts for a chosen group.
+
 ## The pipeline
 
 1. `read_catalogue()` reads and validates every YAML.
