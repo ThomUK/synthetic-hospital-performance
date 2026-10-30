@@ -18,6 +18,7 @@ Depends: R (>= 4.1)
 Imports:
     DBI,
     NHSRplotthedots (>= 0.2.0),
+    ggplot2,
     rlang,
     tools,
     utils,

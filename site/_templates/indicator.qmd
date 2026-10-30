@@ -15,10 +15,23 @@ s <- built$summaries[built$summaries$id == id, ]
 
 `r m$description`
 
+::: {.panel-tabset}
+
+## SPC
+
 ```{r chart}
 #| fig-alt: !expr paste("SPC chart of", m$title)
 plot_indicator(x)
 ```
+
+## By financial year
+
+```{r seasons}
+#| fig-alt: !expr paste("One line per financial year, April to March, for", m$title)
+plot_indicator_seasons(x)
+```
+
+:::
 
 ::: {.callout-note collapse="false" appearance="minimal"}
 ## Latest period

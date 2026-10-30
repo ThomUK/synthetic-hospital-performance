@@ -1,7 +1,7 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom rlang %||%
+#' @importFrom rlang %||% .data
 NULL
 
 # Field names a component YAML may carry. `sql` defaults to `<id>.sql`.
