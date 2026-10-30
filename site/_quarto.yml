@@ -1,0 +1,40 @@
+project:
+  type: website
+  output-dir: _site
+  pre-render: Rscript _build.R
+  render:
+    - index.qmd
+    - about.qmd
+    - metrics/*.qmd
+
+website:
+  title: "Fake NHS Trust performance"
+  description: "SPC charts for the synthetic hospital dataset"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Metrics
+      - href: about.qmd
+        text: How it works
+    right:
+      - icon: github
+        href: https://github.com/ThomUK/synthetic-hospital-performance
+  page-footer:
+    left: "Nothing here is real. Every patient, ward and number is synthetic."
+    right: "Built with fhperf, NHSRplotthedots and Quarto"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    code-tools: false
+    fig-width: 10
+    fig-height: 5
+    df-print: kable
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: false

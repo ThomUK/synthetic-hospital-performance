@@ -1,0 +1,9 @@
+id: ed_attendances_count
+title: ED attendances
+description: The number of emergency department attendances arriving in the period.
+category: Urgent and emergency care
+type: count
+numerator: ed_attendances
+unit: attendances
+grain: month
+improvement_direction: neutral

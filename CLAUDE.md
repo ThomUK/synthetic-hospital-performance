@@ -1,0 +1,27 @@
+# synthetic-hospital-performance
+
+An R package, `fhperf`, with a catalogue of performance metrics for the
+Fake NHS Trust synthetic dataset, and a Quarto site in `site/` that renders
+each metric as an NHSRplotthedots SPC chart. Deployed to GitHub Pages from
+`main` by `.github/workflows/pages.yml`.
+
+## Working rules
+
+- **Merge finished work to `main` and push it.** There is no review gate and
+  Pages deploys from `main`. Work on the session branch if one is assigned,
+  then fast-forward it into `main` and push `main`. Do not open a pull
+  request unless asked.
+- **Commit as Claude.** Author and committer are `Claude <noreply@anthropic.com>`.
+- **One YAML per metric and per component, ids in one namespace.** A metric
+  names its `numerator` and (unless a count) `denominator` component. A
+  component's SQL returns one row per event with `event_date` and, for
+  `aggregate: sum`, `value`. `read_catalogue()` validates everything; keep
+  the validator in step with any new field.
+- **Reuse denominators.** Before adding a component, check whether one in
+  `inst/components/` already defines the population.
+- **Keep the database out of the pages.** `site/_build.R` is the only
+  place a render opens the data; pages read `site/_data/metrics.rds`. This
+  is the seam a `{targets}` pipeline will replace.
+- Tests: `Rscript -e 'devtools::test()'`. The integration tests need
+  `duckdb` and the sample (see README) and skip without them.
+- Regenerate docs after changing roxygen comments: `Rscript -e 'devtools::document()'`.

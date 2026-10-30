@@ -1,0 +1,69 @@
+---
+title: "{{title}}"
+params:
+  id: "{{id}}"
+---
+
+```{r setup}
+library(fhperf)
+built <- readRDS(file.path(if (file.exists("_data/metrics.rds")) "." else "..", "_data", "metrics.rds"))
+id <- params$id
+m <- get_metric(built$catalogue, id)
+x <- built$metrics[[id]]
+s <- built$summaries[built$summaries$id == id, ]
+```
+
+`r m$description`
+
+```{r chart}
+#| fig-alt: !expr paste("SPC chart of", m$title)
+plot_metric(x)
+```
+
+::: {.callout-note collapse="false" appearance="minimal"}
+## Latest period
+
+```{r latest}
+latest <- data.frame(
+  Period = format(s$period, "%B %Y"),
+  Value = format_value(s$value, m),
+  Mean = format_value(s$mean, m),
+  Variation = gsub("_", " ", s$variation),
+  Target = if (is.na(s$target)) "none" else format_value(s$target, m),
+  Assurance = if (is.na(s$assurance)) "n/a" else s$assurance,
+  check.names = FALSE
+)
+knitr::kable(latest)
+```
+:::
+
+## Definition
+
+```{r definition}
+#| results: asis
+cat("- **Id:** `", id, "`\n", sep = "")
+cat("- **Type:** ", m$type, if (m$type != "count") paste0(" (× ", format(m$multiplier), if (m$divisor != 1) paste0(" ÷ ", format(m$divisor)), ")"), "\n", sep = "")
+cat("- **Grain:** ", m$grain, "\n", sep = "")
+cat("- **Improvement direction:** ", m$improvement_direction, "\n", sep = "")
+if (!is.null(m$target)) cat("- **Target:** ", format_value(m$target, m), "\n", sep = "")
+comps <- metric_components(m)
+for (role in names(comps)) {
+  comp <- get_component(built$catalogue, comps[[role]])
+  cat("\n### ", tools::toTitleCase(role), ": ", comp$title, " {#", comps[[role]], "}\n\n", sep = "")
+  cat("`", comp$id, "` · ", comp$aggregate, if (!is.null(comp$unit)) paste0(" of ", comp$unit), " · source `", comp$source, "`\n\n", sep = "")
+  cat(comp$description, "\n\n")
+  cat("```sql\n", component_sql(built$catalogue, comp$id), "\n```\n\n", sep = "")
+}
+```
+
+## Data
+
+```{r data}
+tab <- as.data.frame(x)
+tab$period <- format(tab$period, "%b %Y")
+tab$value <- format_value(tab$value, m)
+tab$numerator <- formatC(tab$numerator, format = "f", digits = 0, big.mark = ",")
+tab$denominator <- if (m$type == "count") NULL else formatC(tab$denominator, format = "f", digits = 0, big.mark = ",")
+names(tab) <- tools::toTitleCase(names(tab))
+knitr::kable(tab[nrow(tab):1, ], row.names = FALSE, align = "r")
+```

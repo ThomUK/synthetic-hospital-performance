@@ -1,0 +1,6 @@
+id: inpatient_discharges
+title: Inpatient discharges
+description: Closed spells that were not day cases, dated by discharge. Spells whose discharge precedes their admission are a data quality defect and are excluded.
+source: derived.spells
+aggregate: count
+unit: discharges

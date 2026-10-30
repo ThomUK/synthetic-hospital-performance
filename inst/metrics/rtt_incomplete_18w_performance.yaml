@@ -1,0 +1,11 @@
+id: rtt_incomplete_18w_performance
+title: RTT incomplete pathways within 18 weeks
+description: The percentage of referral-to-treatment pathways open at the month end that had waited 18 weeks or less. A month-end snapshot, so the grain is fixed at monthly.
+category: Planned care
+type: percentage
+numerator: rtt_incomplete_within_18w
+denominator: rtt_incomplete
+unit: "%"
+grain: month
+improvement_direction: increase
+target: 92

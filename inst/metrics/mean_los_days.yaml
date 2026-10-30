@@ -1,0 +1,11 @@
+id: mean_los_days
+title: Mean length of stay
+description: Mean days from admission to discharge for inpatient spells discharged in the period, excluding day cases. Measured in bed-minutes and divided by 1440, so it is a true duration rather than a count of midnights.
+category: Admitted patient care
+type: mean
+numerator: inpatient_bed_minutes
+denominator: inpatient_discharges
+divisor: 1440
+unit: days
+grain: month
+improvement_direction: decrease

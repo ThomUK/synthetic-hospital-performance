@@ -1,0 +1,6 @@
+id: op_attendances_and_dnas
+title: Outpatient attendances and DNAs
+description: Outpatient appointments the patient attended (status 5 or 6) or did not attend (status 3 or 7), dated by appointment. Cancelled appointments are excluded, as in the standard DNA rate.
+source: derived.op_appointments
+aggregate: count
+unit: appointments

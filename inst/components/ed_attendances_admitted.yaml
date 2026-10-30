@@ -1,0 +1,6 @@
+id: ed_attendances_admitted
+title: ED attendances ending in admission
+description: ED attendances where the patient was admitted to a bed, dated by arrival.
+source: derived.ed_attendances
+aggregate: count
+unit: attendances

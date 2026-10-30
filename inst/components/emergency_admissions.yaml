@@ -1,0 +1,6 @@
+id: emergency_admissions
+title: Emergency admissions
+description: Inpatient spells with an emergency admission method, dated by admission.
+source: derived.spells
+aggregate: count
+unit: admissions

@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+/site/_site/
+/site/_data/
+/site/metrics/*.qmd
+/site/.quarto/
+/site/*_files/
+/site/metrics/*_files/
+/_targets/

@@ -1,0 +1,6 @@
+id: ed_within_4h
+title: ED attendances departing within four hours
+description: ED attendances whose time in department was four hours or less, dated by arrival.
+source: derived.ed_attendances
+aggregate: count
+unit: attendances

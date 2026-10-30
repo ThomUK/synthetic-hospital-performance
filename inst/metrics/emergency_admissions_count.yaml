@@ -1,0 +1,9 @@
+id: emergency_admissions_count
+title: Emergency admissions
+description: The number of spells admitted as an emergency in the period.
+category: Admitted patient care
+type: count
+numerator: emergency_admissions
+unit: admissions
+grain: month
+improvement_direction: neutral

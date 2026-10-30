@@ -1,0 +1,53 @@
+---
+title: "Metrics"
+---
+
+```{r setup}
+library(fhperf)
+built <- readRDS("_data/metrics.rds")
+tab <- merge(built$table, built$summaries[, setdiff(names(built$summaries), "target")], by = "id", sort = FALSE)
+tab <- tab[order(tab$category, tab$title), ]
+```
+
+Statistical process control charts for the
+[Fake NHS Trust synthetic hospital dataset](https://thomuk.github.io/synthetic-hospital-data/),
+built from the **`r built$scale`** set covering
+`r format(built$window[1], "%B %Y")` to `r format(built$window[2], "%B %Y")`.
+Each metric is defined by one or two components, each a SQL query that
+returns one row per event; the package counts or sums them by month and
+plots the result with
+[NHSRplotthedots](https://nhs-r-community.github.io/NHSRplotthedots/).
+See [how it works](about.qmd).
+
+```{r table}
+#| results: asis
+icon <- function(variation) gsub("_", " ", gsub("special_cause_", "", variation))
+for (cat_name in unique(tab$category)) {
+  rows <- tab[tab$category == cat_name, ]
+  cat("\n## ", cat_name, "\n\n", sep = "")
+  out <- data.frame(
+    Metric = sprintf("[%s](metrics/%s.qmd)", rows$title, rows$id),
+    Type = rows$type,
+    Latest = format(rows$period, "%b %Y"),
+    Value = mapply(function(v, id) format_value(v, get_metric(built$catalogue, id)), rows$value, rows$id),
+    Variation = icon(rows$variation),
+    Target = ifelse(is.na(rows$target), "", mapply(function(v, id) format_value(v, get_metric(built$catalogue, id)), rows$target, rows$id)),
+    Assurance = ifelse(is.na(rows$assurance), "", rows$assurance),
+    check.names = FALSE
+  )
+  print(knitr::kable(out, row.names = FALSE))
+  cat("\n")
+}
+```
+
+```{r charts}
+#| fig-height: 4
+#| results: asis
+for (id in tab$id) {
+  cat("\n### ", built$table$title[built$table$id == id], " {.unnumbered}\n\n", sep = "")
+  print(plot_metric(built$metrics[[id]], icons_size = 6))
+  cat("\n")
+}
+```
+
+Built `r format(built$built_at, "%Y-%m-%d %H:%M %Z")`.

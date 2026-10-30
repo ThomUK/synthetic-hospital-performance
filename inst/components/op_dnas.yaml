@@ -1,0 +1,6 @@
+id: op_dnas
+title: Outpatient DNAs
+description: Outpatient appointments the patient did not attend (status 3) or arrived too late to be seen (status 7), dated by appointment.
+source: derived.op_appointments
+aggregate: count
+unit: appointments

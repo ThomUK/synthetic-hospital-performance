@@ -1,0 +1,33 @@
+Package: fhperf
+Title: Performance Metrics and SPC Charts for the Fake NHS Trust
+Version: 0.1.0
+Authors@R: person("Claude", role = c("aut", "cre"), email = "noreply@anthropic.com")
+Description: A catalogue of performance metrics for the Fake NHS Trust synthetic
+    hospital dataset. Each metric is a YAML file that composes one or two
+    components; each component is a YAML file plus a SQL query that returns one
+    row per event. The package reads the events, aggregates them into
+    numerators and denominators by period, and shapes the result for
+    'NHSRplotthedots' SPC charts. A Quarto site in site/ renders every metric.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+URL: https://github.com/ThomUK/synthetic-hospital-performance
+BugReports: https://github.com/ThomUK/synthetic-hospital-performance/issues
+Depends: R (>= 4.1)
+Imports:
+    DBI,
+    NHSRplotthedots (>= 0.2.0),
+    rlang,
+    tools,
+    utils,
+    yaml
+Suggests:
+    duckdb,
+    fakehospdata,
+    knitr,
+    testthat (>= 3.0.0),
+    withr
+Remotes:
+    ThomUK/synthetic-hospital-data/fakehospdata
+Config/testthat/edition: 3

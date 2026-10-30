@@ -1,0 +1,11 @@
+id: imaging_per_1000_ed_attendances
+title: Imaging requests per 1,000 ED attendances
+description: Imaging exams requested from the emergency department per 1,000 ED attendances in the same month.
+category: Diagnostics
+type: rate
+numerator: imaging_requests_from_ed
+denominator: ed_attendances
+multiplier: 1000
+unit: exams per 1,000 attendances
+grain: month
+improvement_direction: neutral

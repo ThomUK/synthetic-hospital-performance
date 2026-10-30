@@ -1,0 +1,6 @@
+id: ed_attendances
+title: ED attendances
+description: One row per emergency department attendance, dated by arrival.
+source: derived.ed_attendances
+aggregate: count
+unit: attendances

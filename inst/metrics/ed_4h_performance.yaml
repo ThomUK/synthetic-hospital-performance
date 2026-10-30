@@ -1,0 +1,11 @@
+id: ed_4h_performance
+title: ED four-hour performance
+description: The percentage of ED attendances that left the department within four hours of arrival.
+category: Urgent and emergency care
+type: percentage
+numerator: ed_within_4h
+denominator: ed_attendances
+unit: "%"
+grain: month
+improvement_direction: increase
+target: 95

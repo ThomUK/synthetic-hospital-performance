@@ -1,0 +1,6 @@
+id: ed_minutes_admitted
+title: Minutes in ED, admitted attendances
+description: Minutes from arrival to departure for ED attendances that ended in admission, dated by arrival. Attendances with no recorded departure contribute nothing.
+source: derived.ed_attendances
+aggregate: sum
+unit: minutes

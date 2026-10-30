@@ -1,0 +1,10 @@
+id: op_dna_rate
+title: Outpatient DNA rate
+description: The percentage of outpatient appointments, excluding cancellations, that the patient did not attend.
+category: Outpatients
+type: percentage
+numerator: op_dnas
+denominator: op_attendances_and_dnas
+unit: "%"
+grain: month
+improvement_direction: decrease

@@ -1,0 +1,11 @@
+id: ed_los_admitted_hours
+title: Mean time in ED, admitted patients
+description: Mean hours from arrival to departure for attendances that ended in admission to a bed. Total minutes divided by attendances, then by 60.
+category: Urgent and emergency care
+type: mean
+numerator: ed_minutes_admitted
+denominator: ed_attendances_admitted
+divisor: 60
+unit: hours
+grain: month
+improvement_direction: decrease
