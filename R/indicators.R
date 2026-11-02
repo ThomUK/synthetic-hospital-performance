@@ -141,18 +141,23 @@ print.fhperf_indicator_data <- function(x, ...) {
 #' @param value Numeric values.
 #' @param indicator An indicator from [get_indicator()].
 #' @return A character vector: counts without decimals, percentages with
-#'   one and a `%` sign, rates and means with one decimal. `format_axis()`
-#'   formats axis breaks with thousands separators and never in scientific
-#'   notation.
-#' @rdname format_value
+#'   one and a `%` sign, rates and means with one decimal.
+#'   `format_compact()` is the same but shortens large counts for point
+#'   labels: 12,345 stays, 123,456 becomes 123k and 4,142,993 becomes
+#'   4.14M. `format_axis()` formats axis breaks with thousands separators
+#'   and never in scientific notation.
 #' @export
-format_axis <- function(value) {
-  vapply(value, function(v) if (is.na(v)) NA_character_ else format(v, big.mark = ",", scientific = FALSE, trim = TRUE, digits = 15), character(1))
+format_value <- function(value, indicator) {
+  out <- switch(indicator$type,
+    count = formatC(value, format = "f", digits = 0, big.mark = ","),
+    percentage = paste0(formatC(value, format = "f", digits = 1), "%"),
+    formatC(value, format = "f", digits = 1)
+  )
+  out[is.na(value)] <- NA_character_
+  out
 }
 
 #' @rdname format_value
-#' @param compact Shorten large counts for point labels: 12,345 stays, but
-#'   123,456 becomes 123k and 4,142,993 becomes 4.14M.
 #' @export
 format_compact <- function(value, indicator) {
   out <- format_value(value, indicator)
@@ -164,13 +169,8 @@ format_compact <- function(value, indicator) {
   out
 }
 
+#' @rdname format_value
 #' @export
-format_value <- function(value, indicator) {
-  out <- switch(indicator$type,
-    count = formatC(value, format = "f", digits = 0, big.mark = ","),
-    percentage = paste0(formatC(value, format = "f", digits = 1), "%"),
-    formatC(value, format = "f", digits = 1)
-  )
-  out[is.na(value)] <- NA_character_
-  out
+format_axis <- function(value) {
+  vapply(value, function(v) if (is.na(v)) NA_character_ else format(v, big.mark = ",", scientific = FALSE, trim = TRUE, digits = 15), character(1))
 }
