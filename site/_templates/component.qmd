@@ -1,0 +1,67 @@
+---
+title: "{{title}}"
+params:
+  id: "{{id}}"
+---
+
+```{r setup}
+library(fhperf)
+built <- readRDS(file.path(if (file.exists("_data/indicators.rds")) "." else "..", "_data", "indicators.rds"))
+id <- params$id
+cat <- built$catalogue
+comp <- get_component(cat, id)
+x <- built$components[[id]]$series
+m <- attr(x, "indicator")
+ct <- component_table(cat)
+used <- strsplit(ct$used_by[ct$id == id], ", ", fixed = TRUE)[[1]]
+used_text <- paste(gsub("^([a-z]+_[0-9]{3}) \\((.*)\\)$", "[`\\1`](../indicators/\\1.qmd) (\\2)", used), collapse = ", ")
+kind_text <- if (comp$snapshot) "the position on each snapshot date" else paste("one row per event,", comp$aggregate, if (!is.null(comp$unit)) paste("of", comp$unit))
+```
+
+`r comp$description`
+
+A component: `r kind_text`, charted here as a `r if (comp$snapshot) "stock" else "count"` by month. Used by `r used_text`.
+
+::: {.panel-tabset}
+
+## SPC
+
+```{r chart}
+#| fig-alt: !expr paste("SPC chart of", comp$title)
+plot_indicator(x)
+```
+
+## By financial year
+
+```{r seasons}
+#| fig-alt: !expr paste("One line per financial year, April to March, for", comp$title)
+plot_indicator_seasons(x)
+```
+
+## 6-12
+
+```{r sixtwelve}
+#| fig-alt: !expr paste("The last six weeks and twelve months of", comp$title, "against a year earlier")
+plot_six_twelve(built$components[[id]]$six_twelve)
+```
+
+:::
+
+## Definition
+
+```{r definition}
+#| results: asis
+cat("- **Id:** `", id, "` (domain `", id_domain(id), "`, ", cat$domains[[id_domain(id)]]$title, ") &middot; [YAML](../yaml.qmd#yaml-", id, ")\n", sep = "")
+cat("- **Aggregate:** ", comp$aggregate, if (!is.null(comp$unit)) paste0(" of ", comp$unit), if (comp$snapshot) " (snapshot)", "\n", sep = "")
+if (!is.null(comp$source)) cat("- **Source:** `", comp$source, "`\n", sep = "")
+if (length(comp$dimensions) > 0) cat("- **Dimensions:** ", paste(comp$dimensions, collapse = ", "), "\n", sep = "")
+cat("\n```sql\n", component_sql(cat, id), "\n```\n\n", sep = "")
+```
+
+## Data
+
+```{r data}
+tab <- data.frame(Period = format(x$period, "%b %Y"), Value = format_value(x$value, m))
+names(tab)[2] <- tools::toTitleCase(if (is.null(comp$unit)) "value" else comp$unit)
+knitr::kable(tab[nrow(tab):1, ], row.names = FALSE, align = "r")
+```

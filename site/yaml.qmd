@@ -46,8 +46,10 @@ for (id in sort(unique(c(it$id, ct$id)))) {
     code("yaml", read_text(ind$file))
   }
   if (!is.null(comp)) {
-    cat(sprintf("**Component** &middot; `inst/components/%s` and `inst/sql/%s` &middot; used by %s\n\n",
-                basename(comp$file), get_component(cat, id)$sql, link_ids(ct$used_by[ct$id == id])))
+    cat(sprintf("**Component** &middot; `inst/components/%s` and `inst/sql/%s` &middot; [component page](%s) &middot; used by %s\n\n",
+                basename(comp$file), get_component(cat, id)$sql,
+                if (!is.null(ind)) sprintf("indicators/%s.qmd", id) else sprintf("components/%s.qmd", id),
+                link_ids(ct$used_by[ct$id == id])))
     code("yaml", read_text(comp$file))
     code("sql", component_sql(cat, id))
   }

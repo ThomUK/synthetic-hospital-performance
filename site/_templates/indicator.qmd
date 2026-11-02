@@ -11,8 +11,10 @@ id <- params$id
 m <- get_indicator(built$catalogue, id)
 x <- built$indicators[[id]]
 s <- built$summaries[built$summaries$id == id, ]
-parts <- built$parts[[id]]   # numerator and denominator series, or NULL for a count
+# numerator and denominator charted on their own, or nothing for a count
+parts <- if (is.null(m$denominator)) NULL else lapply(indicator_components(m), function(c) built$components[[c]])
 part_title <- function(role) paste0(tools::toTitleCase(role), ": ", attr(parts[[role]]$series, "indicator")$title, " (", m[[role]], ")")
+component_page <- function(cid) if (cid %in% indicator_ids(built$catalogue)) paste0(cid, ".qmd") else paste0("../components/", cid, ".qmd")
 ```
 
 `r m$description`
@@ -160,7 +162,7 @@ comps <- indicator_components(m)
 for (role in names(comps)) {
   comp <- get_component(built$catalogue, comps[[role]])
   label <- if (comps[[role]] == id) paste0(tools::toTitleCase(role), " (itself)") else tools::toTitleCase(role)
-  cat("\n### ", label, ": ", comp$title, " {#", comps[[role]], "}\n\n", sep = "")
+  cat("\n### ", label, ": [", comp$title, "](", component_page(comps[[role]]), ") {#", comps[[role]], "}\n\n", sep = "")
   cat("`", comp$id, "` · ", comp$aggregate, if (!is.null(comp$unit)) paste0(" of ", comp$unit), " · source `", comp$source, "` · [YAML](../yaml.qmd#yaml-", comp$id, ")\n\n", sep = "")
   cat(comp$description, "\n\n")
   cat("```sql\n", component_sql(built$catalogue, comp$id), "\n```\n\n", sep = "")

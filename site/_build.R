@@ -28,17 +28,14 @@ breakdowns <- lapply(indicator_ids(cat), function(id) {
 names(breakdowns) <- indicator_ids(cat)
 breakdown_summaries <- lapply(breakdowns, function(by_dim) lapply(by_dim, breakdown_summary))
 
-# Numerator and denominator of every indicator that has a denominator,
-# charted as series of their own, with their 6-12 views.
-parts <- lapply(indicator_ids(cat), function(id) {
-  ind <- get_indicator(cat, id)
-  if (is.null(ind$denominator)) return(NULL)
-  lapply(indicator_components(ind), function(c) list(
-    series = component_series(con, cat, c, grain = ind$grain, window = window, cache = cache),
-    six_twelve = six_twelve_component(con, cat, c, window = window, cache = cache)
-  ))
-})
-names(parts) <- indicator_ids(cat)
+# Every component charted as a series of its own, with its 6-12 view: the
+# component pages, and the numerator and denominator charts under each
+# indicator's main chart.
+components <- lapply(component_ids(cat), function(c) list(
+  series = component_series(con, cat, c, grain = "month", window = window, cache = cache),
+  six_twelve = six_twelve_component(con, cat, c, window = window, cache = cache)
+))
+names(components) <- component_ids(cat)
 
 # The 6-12 view for every indicator and every breakdown group, as of the
 # window's last day.
@@ -60,7 +57,7 @@ saveRDS(list(
   built_at = Sys.time(), scale = scale, window = window, min_per_period = min_per_period,
   catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries,
   breakdowns = breakdowns, breakdown_summaries = breakdown_summaries,
-  six_twelve = six, six_twelve_breakdowns = six_breakdowns, parts = parts
+  six_twelve = six, six_twelve_breakdowns = six_breakdowns, components = components
 ), "_data/indicators.rds")
 
 # One page per indicator. Existing generated pages are removed first so that a
@@ -76,4 +73,16 @@ for (id in indicator_ids(cat)) {
   writeLines(page, file.path("indicators", paste0(id, ".qmd")))
 }
 n_groups <- sum(unlist(lapply(breakdowns, function(b) vapply(b, function(x) length(unique(x$group)), numeric(1)))))
-message("Built ", length(indicators), " indicators, ", n_groups, " breakdown groups, and wrote ", length(indicator_ids(cat)), " pages")
+# And one page per component.
+dir.create("components", showWarnings = FALSE)
+unlink(list.files("components", pattern = "\\.qmd$", full.names = TRUE))
+template <- readLines("_templates/component.qmd")
+for (id in component_ids(cat)) {
+  comp <- get_component(cat, id)
+  page <- template
+  page <- gsub("{{id}}", id, page, fixed = TRUE)
+  page <- gsub("{{title}}", gsub('"', "'", comp$title, fixed = TRUE), page, fixed = TRUE)
+  writeLines(page, file.path("components", paste0(id, ".qmd")))
+}
+message("Built ", length(indicators), " indicators, ", length(components), " components, ", n_groups,
+        " breakdown groups, and wrote ", length(indicator_ids(cat)) + length(component_ids(cat)), " pages")

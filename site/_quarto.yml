@@ -8,6 +8,7 @@ project:
     - yaml.qmd
     - about.qmd
     - indicators/*.qmd
+    - components/*.qmd
 
 website:
   title: "Fake NHS Trust performance"

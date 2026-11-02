@@ -6,6 +6,8 @@
 /site/_site/
 /site/_data/
 /site/indicators/*.qmd
+/site/components/*.qmd
+/site/components/*_files/
 /site/.quarto/
 /site/*_files/
 /site/indicators/*_files/

@@ -9,16 +9,15 @@ tab <- merge(built$table, built$summaries[, setdiff(names(built$summaries), "tar
 tab <- tab[order(match(tab$domain, domain_codes(built$catalogue)), tab$id), ]
 ```
 
-Statistical process control charts for the
+Performance indicators for the
 [Fake NHS Trust synthetic hospital dataset](https://thomuk.github.io/synthetic-hospital-data/),
 built from the **`r built$scale`** set covering
 `r format(built$window[1], "%B %Y")` to `r format(built$window[2], "%B %Y")`.
 Each indicator is defined by one or two components, each a SQL query that
-returns one row per event; the package counts or sums them by month and
-plots the result with
-[NHSRplotthedots](https://nhs-r-community.github.io/NHSRplotthedots/).
-The [index](catalogue.qmd) lists every indicator with its numerator and
-denominator ids; [how it works](about.qmd) explains the structure.
+returns one row per event, counted or summed by month. Every indicator has
+a page with its charts, breakdowns and definition. The [index](catalogue.qmd)
+lists every indicator and component with its ids and links;
+[how it works](about.qmd) explains the structure.
 
 ```{r table}
 #| results: asis
@@ -38,16 +37,6 @@ for (dom in unique(tab$domain)) {
     check.names = FALSE
   )
   print(knitr::kable(out, row.names = FALSE))
-  cat("\n")
-}
-```
-
-```{r charts}
-#| fig-height: 4
-#| results: asis
-for (id in tab$id) {
-  cat("\n### ", built$table$title[built$table$id == id], " (`", id, "`) {.unnumbered}\n\n", sep = "")
-  print(plot_indicator(built$indicators[[id]], icons_size = 6))
   cat("\n")
 }
 ```
