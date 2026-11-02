@@ -89,7 +89,7 @@ plot_indicator_seasons <- function(data, start_month = 4, show_target = TRUE) {
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank(), legend.position = "bottom",
                    plot.title.position = "plot")
-  p <- p + season_x_scale(ind$grain, start_month)
+  p <- p + season_x_scale(ind$grain, start_month) + ggplot2::scale_y_continuous(labels = format_axis)
   if (show_target && !is.null(ind$target)) {
     p <- p + ggplot2::geom_hline(yintercept = ind$target, linetype = "dashed", colour = "#555555")
   }

@@ -11,6 +11,8 @@ id <- params$id
 m <- get_indicator(built$catalogue, id)
 x <- built$indicators[[id]]
 s <- built$summaries[built$summaries$id == id, ]
+parts <- built$parts[[id]]   # numerator and denominator series, or NULL for a count
+part_title <- function(role) paste0(tools::toTitleCase(role), ": ", attr(parts[[role]]$series, "indicator")$title, " (", m[[role]], ")")
 ```
 
 `r m$description`
@@ -24,6 +26,15 @@ s <- built$summaries[built$summaries$id == id, ]
 plot_indicator(x)
 ```
 
+```{r chart-parts}
+#| eval: !expr length(parts) > 0
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: "SPC charts of the numerator and the denominator"
+for (role in names(parts)) print(plot_indicator(parts[[role]]$series, main_title = part_title(role), point_size = 1.8))
+```
+
 ## By financial year
 
 ```{r seasons}
@@ -31,11 +42,33 @@ plot_indicator(x)
 plot_indicator_seasons(x)
 ```
 
+```{r seasons-parts}
+#| eval: !expr length(parts) > 0
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: "Financial year charts of the numerator and the denominator"
+for (role in names(parts)) print(plot_indicator_seasons(parts[[role]]$series) + ggplot2::labs(title = part_title(role)))
+```
+
 ## 6-12
 
 ```{r sixtwelve}
 #| fig-alt: !expr paste("The last six weeks and twelve months of", m$title, "against a year earlier")
 plot_six_twelve(built$six_twelve[[id]])
+```
+
+```{r sixtwelve-parts}
+#| eval: !expr length(parts) > 0
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 4.5
+#| fig-alt: "6-12 charts of the numerator and the denominator"
+for (role in names(parts)) {
+  six <- parts[[role]]$six_twelve
+  six$indicator$title <- part_title(role)
+  print(plot_six_twelve(six))
+}
 ```
 
 :::

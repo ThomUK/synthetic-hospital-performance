@@ -29,13 +29,18 @@
 #' @export
 six_twelve <- function(con, cat, id, as_of = NULL, window = NULL, cache = new.env(), by = NULL, group = NULL, start_month = 4) {
   ind <- get_indicator(cat, id)
-  window <- resolve_window(window)
-  if (is.null(window)) stop("six_twelve() needs a window; none was given and the dataset window is not available", call. = FALSE)
-  as_of <- as.Date(as_of %||% window[2])
-  snapshot <- is_snapshot(cat, id)
   if (!is.null(by) && !by %in% indicator_breakdowns(cat, id)) {
     stop("Indicator '", id, "' cannot be broken down by '", by, "'", call. = FALSE)
   }
+  six_twelve_build(con, cat, ind, is_snapshot(cat, id), as_of, window, cache, by, group, start_month)
+}
+
+# Shared by six_twelve() and six_twelve_component(): `ind` names its
+# numerator and (optionally) denominator components.
+six_twelve_build <- function(con, cat, ind, snapshot, as_of, window, cache, by, group, start_month) {
+  window <- resolve_window(window)
+  if (is.null(window)) stop("six_twelve() needs a window; none was given and the dataset window is not available", call. = FALSE)
+  as_of <- as.Date(as_of %||% window[2])
   if (!is.null(by) && is.null(group)) stop("group is needed with by", call. = FALSE)
   extra <- c(as_of, shift_year(as_of, -1))
   series <- function(component) {
@@ -229,7 +234,7 @@ six_twelve_chart <- function(x) {
   d <- rbind(w, m)
   d$panel <- factor(d$panel, levels = c("Last 6 weeks", "Last 12 months"))
   d$label <- factor(d$label, levels = unique(d$label))
-  d$text <- format_value(d$value, ind)
+  d$text <- format_compact(d$value, ind)
   cols <- c("This year" = "#2a78d6", "A year earlier" = "#a8a8a8", "Target" = "#eb6834")
   p <- ggplot2::ggplot(d, ggplot2::aes(x = .data$label)) +
     ggplot2::geom_line(ggplot2::aes(y = .data$prior, group = 1, colour = "A year earlier"), linewidth = 0.6, na.rm = TRUE) +
@@ -237,7 +242,7 @@ six_twelve_chart <- function(x) {
     ggplot2::geom_point(ggplot2::aes(y = .data$value, colour = "This year"), size = 2.2, na.rm = TRUE) +
     ggplot2::geom_text(ggplot2::aes(y = .data$value, label = .data$text), vjust = -0.9, size = 3, colour = "#1f2d3d", na.rm = TRUE) +
     ggplot2::facet_grid(. ~ panel, scales = "free", space = "free_x") +
-    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.08, 0.2))) +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.08, 0.2)), labels = format_axis) +
     ggplot2::labs(title = ind$title, x = NULL, y = ind$unit %||% "",
                   subtitle = paste0("As of ", format(x$as_of, "%d %B %Y"), if (x$snapshot) ". Snapshot: each point is the position at the period's end")) +
     ggplot2::theme_minimal(base_size = 11) +

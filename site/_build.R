@@ -28,6 +28,18 @@ breakdowns <- lapply(indicator_ids(cat), function(id) {
 names(breakdowns) <- indicator_ids(cat)
 breakdown_summaries <- lapply(breakdowns, function(by_dim) lapply(by_dim, breakdown_summary))
 
+# Numerator and denominator of every indicator that has a denominator,
+# charted as series of their own, with their 6-12 views.
+parts <- lapply(indicator_ids(cat), function(id) {
+  ind <- get_indicator(cat, id)
+  if (is.null(ind$denominator)) return(NULL)
+  lapply(indicator_components(ind), function(c) list(
+    series = component_series(con, cat, c, grain = ind$grain, window = window, cache = cache),
+    six_twelve = six_twelve_component(con, cat, c, window = window, cache = cache)
+  ))
+})
+names(parts) <- indicator_ids(cat)
+
 # The 6-12 view for every indicator and every breakdown group, as of the
 # window's last day.
 six <- lapply(indicator_ids(cat), function(id) six_twelve(con, cat, id, window = window, cache = cache))
@@ -48,7 +60,7 @@ saveRDS(list(
   built_at = Sys.time(), scale = scale, window = window, min_per_period = min_per_period,
   catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries,
   breakdowns = breakdowns, breakdown_summaries = breakdown_summaries,
-  six_twelve = six, six_twelve_breakdowns = six_breakdowns
+  six_twelve = six, six_twelve_breakdowns = six_breakdowns, parts = parts
 ), "_data/indicators.rds")
 
 # One page per indicator. Existing generated pages are removed first so that a

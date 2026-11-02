@@ -32,6 +32,13 @@ test_that("combine_components aligns periods and checks the denominator", {
   expect_error(combine_components(num, NULL, list(type = "rate", multiplier = 1, divisor = 1)), "needs a denominator")
 })
 
+test_that("format_compact shortens large counts and format_axis avoids scientific notation", {
+  cnt <- list(type = "count")
+  expect_equal(format_compact(c(12345, 123456, 4142993, NA), cnt), c("12,345", "123k", "4.14M", NA))
+  expect_equal(format_compact(4142993, list(type = "mean")), "4142993.0")
+  expect_equal(format_axis(c(4e6, 500, 0.5)), c("4,000,000", "500", "0.5"))
+})
+
 test_that("format_value follows the indicator type", {
   expect_equal(format_value(c(1234.4, NA), list(type = "count")), c("1,234", NA))
   expect_equal(format_value(95.456, list(type = "percentage")), "95.5%")
