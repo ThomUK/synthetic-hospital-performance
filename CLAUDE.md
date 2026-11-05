@@ -31,12 +31,6 @@ each indicator as an NHSRplotthedots SPC chart. Deployed to GitHub Pages from
   takes `{{snapshot_dates}}` from the package and a period's value is the
   position at its end. Never sum snapshot periods. An indicator's components
   must all be snapshots or none.
-- **`since: vN` gates a definition on a dataset version.** Put it on a
-  component whose SQL reads columns that only exist from version N, and on
-  every indicator that uses it (the validator insists). The site build,
-  `site/_build.R`, reads `FHPERF_DATA_VERSION` (default v2), builds only
-  what that version allows and lists the rest as awaiting data; the
-  integration tests skip them for the same reason.
 - **Reuse denominators.** Before adding a component, check whether one in
   `inst/components/` already defines the population.
 - **Keep the database out of the pages.** `site/_build.R` is the only

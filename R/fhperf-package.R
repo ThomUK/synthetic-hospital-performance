@@ -6,18 +6,13 @@
 NULL
 
 # Field names a component YAML may carry. `sql` defaults to `<id>.sql`.
-component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql", "dimensions", "snapshot", "since")
+component_fields <- c("id", "title", "description", "source", "aggregate", "unit", "sql", "dimensions", "snapshot")
 
 # Field names an indicator YAML may carry.
 indicator_fields <- c(
   "id", "title", "description", "type", "numerator", "denominator",
-  "multiplier", "divisor", "unit", "grain", "improvement_direction", "target", "rebase", "breakdowns", "since"
+  "multiplier", "divisor", "unit", "grain", "improvement_direction", "target", "rebase", "breakdowns"
 )
-
-# Dataset versions are "v" and a number; `since` names the first version a
-# definition can be built from.
-version_pattern <- "^v[0-9]+$"
-version_number <- function(v) as.integer(sub("^v", "", v))
 
 # Every id is a domain code, an underscore and a three-digit number.
 id_pattern <- "^([a-z]+)_([0-9]{3})$"

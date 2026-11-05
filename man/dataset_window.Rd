@@ -4,7 +4,7 @@
 \alias{dataset_window}
 \title{The dates the dataset covers}
 \usage{
-dataset_window(version = "v2")
+dataset_window(version = "v3")
 }
 \arguments{
 \item{version}{Dataset version.}

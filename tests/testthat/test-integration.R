@@ -3,7 +3,7 @@
 test_that("every component in the catalogue runs against the sample", {
   con <- local_sample_con()
   cat <- read_catalogue()
-  for (id in available_components(cat, sample_version)) {
+  for (id in component_ids(cat)) {
     ev <- read_component_events(con, cat, id, window = sample_window)
     expect_gt(nrow(ev), 0, label = paste("rows of", id))
     expect_s3_class(ev$event_date, "Date")
@@ -14,9 +14,8 @@ test_that("every component in the catalogue runs against the sample", {
 test_that("every indicator builds a complete monthly series from the sample", {
   con <- local_sample_con()
   cat <- read_catalogue()
-  ids <- available_indicators(cat, sample_version)
-  res <- build_indicators(con, cat, ids = ids, window = sample_window)
-  expect_named(res, ids)
+  res <- build_indicators(con, cat, window = sample_window)
+  expect_named(res, indicator_ids(cat))
   for (id in names(res)) {
     x <- res[[id]]
     expect_equal(nrow(x), 36, info = id)
@@ -32,4 +31,8 @@ test_that("every indicator builds a complete monthly series from the sample", {
   # reused denominators agree between indicators, and a count is its own numerator
   expect_equal(res$ed_003$denominator, res$diag_002$denominator)
   expect_equal(res$ed_003$denominator, res$ed_001$numerator)
+  # the discharge pathways partition the live inpatient discharges
+  pathways <- Reduce(`+`, lapply(c("apc_008", "apc_009", "apc_010", "apc_011", "apc_012"), function(id) res[[id]]$numerator))
+  expect_equal(pathways, res$apc_007$denominator)
+  expect_true(all(res$apc_012$numerator > 0))
 })

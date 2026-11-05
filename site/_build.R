@@ -8,23 +8,18 @@
 library(fhperf)
 
 scale <- Sys.getenv("FHPERF_SCALE", unset = "sample")
-data_version <- Sys.getenv("FHPERF_DATA_VERSION", unset = "v2")
+data_version <- Sys.getenv("FHPERF_DATA_VERSION", unset = "v3")
 message("Building indicators from the ", scale, " set of data version ", data_version)
 
 cat <- read_catalogue()
 con <- perf_connect(scale, version = data_version, quiet = TRUE)
 on.exit(perf_disconnect(con), add = TRUE)
-
-# Definitions can run ahead of the published data: anything whose `since`
-# is later than this version is listed as awaiting data and not built.
-ids <- available_indicators(cat, data_version)
-comp_ids <- available_components(cat, data_version)
-awaiting <- setdiff(indicator_ids(cat), ids)
-if (length(awaiting)) message("Awaiting a later data version: ", paste(awaiting, collapse = ", "))
+ids <- indicator_ids(cat)
+comp_ids <- component_ids(cat)
 
 window <- dataset_window(data_version)
 cache <- new.env()
-indicators <- build_indicators(con, cat, ids = ids, window = window, cache = cache)
+indicators <- build_indicators(con, cat, window = window, cache = cache)
 summaries <- do.call(rbind, lapply(indicators, indicator_summary))
 
 # Breakdowns: every indicator by every dimension its components share.
@@ -62,7 +57,7 @@ names(six_breakdowns) <- ids
 
 dir.create("_data", showWarnings = FALSE)
 saveRDS(list(
-  built_at = Sys.time(), scale = scale, data_version = data_version, awaiting = awaiting,
+  built_at = Sys.time(), scale = scale, data_version = data_version,
   window = window, min_per_period = min_per_period,
   catalogue = cat, table = indicator_table(cat), indicators = indicators, summaries = summaries,
   breakdowns = breakdowns, breakdown_summaries = breakdown_summaries,

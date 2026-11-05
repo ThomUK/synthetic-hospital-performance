@@ -3,7 +3,7 @@
 # Three ways to find the data, tried in order:
 #   1. FHPERF_SAMPLE_DIR: a directory holding the sample's layer folders
 #      (layer1/, reference/, derived/, ...), for example a checkout of
-#      synthetic-hospital-data at data/v2/sample. Views are created directly.
+#      synthetic-hospital-data at data/v3/sample. Views are created directly.
 #   2. A sibling checkout of synthetic-hospital-data next to this repository.
 #   3. fakehospdata::fh_connect("sample"), which downloads into its cache.
 # Without duckdb, or without any of these, the tests that need data skip.
@@ -11,7 +11,7 @@ local_sample_con <- function(env = parent.frame()) {
   testthat::skip_if_not_installed("duckdb")
   dir <- Sys.getenv("FHPERF_SAMPLE_DIR", unset = "")
   if (!nzchar(dir)) {
-    sibling <- testthat::test_path("..", "..", "..", "synthetic-hospital-data", "data", "v2", "sample")
+    sibling <- testthat::test_path("..", "..", "..", "synthetic-hospital-data", "data", "v3", "sample")
     if (dir.exists(sibling)) dir <- sibling
   }
   con <- if (nzchar(dir) && dir.exists(dir)) {
@@ -40,9 +40,6 @@ sample_dir_con <- function(dir) {
 }
 
 sample_window <- as.Date(c("2023-04-01", "2026-03-31"))
-# The data version the sample the tests see corresponds to; definitions that
-# need a later version are skipped by the integration tests.
-sample_version <- Sys.getenv("FHPERF_SAMPLE_VERSION", unset = "v2")
 
 # Write a throwaway catalogue to a temp directory. `indicators` and
 # `components` are lists of lists; `sql` is a named character vector of

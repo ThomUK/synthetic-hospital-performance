@@ -20,10 +20,6 @@ chart. Nothing in the data is real.
   components carry. `build_breakdowns()` computes every group, folds small
   ones into "Other", and `breakdown_summary()` gives the plot-the-dots
   summary table; the groups always add up to the whole.
-- A definition can run ahead of the published data: `since: v3` on a
-  component or indicator says which dataset version first has what it
-  reads. The site builds what its data version allows and lists the rest as
-  awaiting data; `available_indicators()` makes the same choice in code.
 - Every id is `<domain>_<nnn>`. The domain (`ed`, `apc`, `op`, `rtt`,
   `diag`, listed in `inst/domains.yaml`) names the subject matter expert
   group that owns the definition, and indicators and components share one
@@ -48,12 +44,13 @@ inst/
   sql/          one query per component      ed_002.sql,  ed_001.sql
 ```
 
-The shipped catalogue has ten indicators: ED attendances, ED four-hour
+The shipped catalogue has fifteen indicators: ED attendances, ED four-hour
 performance, mean time in ED for admitted and for non-admitted patients,
 emergency admissions, mean length of stay in bed-minutes (shown as days),
 emergency readmissions within 30 days, outpatient DNA rate, RTT incomplete
-pathways within 18 weeks (a month-end snapshot) and imaging requests per
-1,000 ED attendances.
+pathways within 18 weeks (a month-end snapshot), imaging requests per
+1,000 ED attendances, and live inpatient discharges by discharge pathway
+(P0 to P3 and no pathway recorded).
 
 ## Use
 
@@ -107,8 +104,8 @@ cd site && quarto render        # needs fhperf installed and the sample cached
 
 The `pages` workflow renders and deploys it to GitHub Pages on every push
 to `main`. The repository's Pages source must be set to GitHub Actions.
-`FHPERF_DATA_VERSION` (default `v2`) chooses the dataset version the site
-is built from; raise it when a new version is published.
+`FHPERF_DATA_VERSION` (default `v3`) names the dataset version the site is
+built from.
 
 ## Development
 
@@ -119,7 +116,7 @@ Rscript -e 'devtools::test()'
 
 The integration tests need `duckdb` and the sample: set `FHPERF_SAMPLE_DIR`
 to a sample directory (a checkout of `synthetic-hospital-data` at
-`data/v2/sample`), keep that repository checked out next to this one, or let
+`data/v3/sample`), keep that repository checked out next to this one, or let
 `fakehospdata` download it. Otherwise they skip.
 
 ## Later

@@ -120,7 +120,7 @@ resolve_window <- function(window) {
 #' @param version Dataset version.
 #' @return A `Date` vector of length two.
 #' @export
-dataset_window <- function(version = "v2") {
+dataset_window <- function(version = "v3") {
   if (!requireNamespace("fakehospdata", quietly = TRUE)) stop("The fakehospdata package is needed to read the dataset window", call. = FALSE)
   m <- fakehospdata::fh_manifest(version)
   as.Date(c(m$window$start, m$window$end))

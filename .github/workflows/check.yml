@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/R/fakehospdata
-          key: fakehospdata-v2-sample
+          key: fakehospdata-v3-sample
 
       - uses: r-lib/actions/check-r-package@v2
         with:

@@ -5,7 +5,7 @@
 \alias{perf_disconnect}
 \title{Open the dataset}
 \usage{
-perf_connect(scale = c("sample", "full"), version = "v2", ...)
+perf_connect(scale = c("sample", "full"), version = "v3", ...)
 
 perf_disconnect(con)
 }
@@ -13,7 +13,7 @@ perf_disconnect(con)
 \item{scale}{\code{"sample"} (5\% of patients, about 130 MB) or \code{"full"} (about
 1.1 GB).}
 
-\item{version}{Dataset version, such as \code{"v2"}.}
+\item{version}{Dataset version, such as \code{"v3"}.}
 
 \item{...}{Passed to \code{\link[fakehospdata:fh_connect]{fakehospdata::fh_connect()}}.}
 
