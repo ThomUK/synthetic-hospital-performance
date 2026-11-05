@@ -1,0 +1,8 @@
+id: apc_008
+title: Discharges on pathway P0
+description: "Live inpatient discharges that left on discharge pathway 0: home with no new or additional support."
+source: derived.spells
+aggregate: count
+unit: discharges
+dimensions: [site, specialty]
+since: v3

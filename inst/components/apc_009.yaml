@@ -1,0 +1,8 @@
+id: apc_009
+title: Discharges on pathway P1
+description: "Live inpatient discharges that left on discharge pathway 1: home with a new or increased package of support, such as reablement or home care."
+source: derived.spells
+aggregate: count
+unit: discharges
+dimensions: [site, specialty]
+since: v3

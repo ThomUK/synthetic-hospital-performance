@@ -1,0 +1,8 @@
+id: apc_010
+title: Discharges on pathway P2
+description: "Live inpatient discharges that left on discharge pathway 2: a short-term bed for rehabilitation or assessment."
+source: derived.spells
+aggregate: count
+unit: discharges
+dimensions: [site, specialty]
+since: v3

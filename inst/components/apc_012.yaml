@@ -1,0 +1,8 @@
+id: apc_012
+title: Discharges with no pathway recorded
+description: "Live inpatient discharges whose discharge pathway is not recorded, or recorded in a form that cannot be read: the data quality remainder of the pathway counts."
+source: derived.spells
+aggregate: count
+unit: discharges
+dimensions: [site, specialty]
+since: v3

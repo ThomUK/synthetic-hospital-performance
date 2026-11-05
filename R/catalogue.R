@@ -181,6 +181,54 @@ is_snapshot <- function(cat, id) {
   all(vapply(comps, function(c) get_component(cat, c)$snapshot, logical(1)))
 }
 
+#' Which data version a definition needs
+#'
+#' A component or indicator whose YAML says `since: v3` can only be built
+#' from dataset version 3 or later, because the columns it reads do not
+#' exist before that. An indicator needs at least what its components need.
+#' `available_indicators()` and `available_components()` list what a given
+#' version can build, so a site can carry definitions ahead of the data.
+#'
+#' @inheritParams catalogue-access
+#' @param version A dataset version such as `"v2"`.
+#' @return `indicator_since()` and `component_since()` return a version
+#'   string, or `NA` when nothing is required; the `available_*()` functions
+#'   return character vectors of ids.
+#' @export
+component_since <- function(cat, id) {
+  get_component(cat, id)$since %||% NA_character_
+}
+
+#' @rdname component_since
+#' @export
+indicator_since <- function(cat, id) {
+  ind <- get_indicator(cat, id)
+  needs <- unname(unlist(c(list(ind$since), lapply(indicator_components(ind), function(c) get_component(cat, c)$since))))
+  needs <- needs[vapply(needs, function(v) is.character(v) && grepl(version_pattern, v), logical(1))]
+  if (length(needs) == 0) return(NA_character_)
+  needs[which.max(version_number(needs))]
+}
+
+#' @rdname component_since
+#' @export
+available_indicators <- function(cat, version) {
+  ids <- indicator_ids(cat)
+  ids[vapply(ids, function(id) version_allows(indicator_since(cat, id), version), logical(1))]
+}
+
+#' @rdname component_since
+#' @export
+available_components <- function(cat, version) {
+  ids <- component_ids(cat)
+  ids[vapply(ids, function(id) version_allows(component_since(cat, id), version), logical(1))]
+}
+
+version_allows <- function(since, version) {
+  if (is.na(since)) return(TRUE)
+  if (!grepl(version_pattern, version)) stop("version must look like v2", call. = FALSE)
+  version_number(version) >= version_number(since)
+}
+
 #' The dimensions an indicator can be broken down by
 #'
 #' A breakdown splits every component of the indicator by one dimension and
@@ -237,6 +285,7 @@ indicator_table <- function(cat) {
       improvement_direction = m$improvement_direction,
       target = as.numeric(m$target %||% NA_real_),
       breakdowns = paste(indicator_breakdowns(cat, id), collapse = ", "),
+      since = indicator_since(cat, id),
       stringsAsFactors = FALSE
     )
   })
@@ -267,6 +316,7 @@ component_table <- function(cat) {
       title = x$title, aggregate = x$aggregate, snapshot = x$snapshot, unit = x$unit %||% NA_character_,
       source = x$source %||% NA_character_, sql = x$sql,
       dimensions = paste(x$dimensions, collapse = ", "),
+      since = x$since %||% NA_character_,
       used_by = paste(uses$use[uses$component == id], collapse = ", "),
       stringsAsFactors = FALSE
     )
@@ -328,6 +378,9 @@ check_components <- function(cat) {
     unknown <- setdiff(dims, names(cat$dimensions))
     if (length(unknown) > 0) p <- c(p, paste0(where, ": dimension(s) not in dimensions.yaml: ", paste(unknown, collapse = ", ")))
     if (!is.null(x$snapshot) && !is.logical(x$snapshot)) p <- c(p, paste0(where, ": snapshot must be true or false"))
+    if (!is.null(x$since) && !(is.character(x$since) && length(x$since) == 1 && grepl(version_pattern, x$since))) {
+      p <- c(p, paste0(where, ": since must be a dataset version such as v3"))
+    }
     if (file.exists(sql)) {
       uses <- any(grepl("{{snapshot_dates}}", readLines(sql, warn = FALSE), fixed = TRUE))
       if (isTRUE(x$snapshot) && !uses) p <- c(p, paste0(where, ": a snapshot component's SQL must use {{snapshot_dates}}"))
@@ -385,6 +438,16 @@ check_indicators <- function(cat) {
     snaps <- vapply(comps, function(c) isTRUE(cat$components[[c]]$snapshot), logical(1))
     if (length(snaps) > 1 && length(unique(snaps)) > 1) {
       p <- c(p, paste0(where, ": numerator and denominator must both be snapshots, or neither"))
+    }
+    if (!is.null(m$since) && !(is.character(m$since) && length(m$since) == 1 && grepl(version_pattern, m$since))) {
+      p <- c(p, paste0(where, ": since must be a dataset version such as v3"))
+    }
+    comp_since <- unlist(lapply(comps, function(c) cat$components[[c]]$since))
+    comp_since <- comp_since[vapply(comp_since, function(v) is.character(v) && grepl(version_pattern, v), logical(1))]
+    if (length(comp_since) > 0) {
+      need <- comp_since[which.max(version_number(comp_since))]
+      own <- if (is.character(m$since) && grepl(version_pattern, m$since)) m$since else "v0"
+      if (version_number(own) < version_number(need)) p <- c(p, paste0(where, ": must declare since: ", need, " because a component needs it"))
     }
     if (!is.null(m$breakdowns)) {
       shared <- Reduce(intersect, lapply(comps, function(c) as.character(unlist(cat$components[[c]]$dimensions))), accumulate = FALSE)

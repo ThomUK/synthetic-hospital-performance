@@ -8,15 +8,16 @@
 #'
 #' @param scale `"sample"` (5% of patients, about 130 MB) or `"full"` (about
 #'   1.1 GB).
+#' @param version Dataset version, such as `"v2"`.
 #' @param ... Passed to [fakehospdata::fh_connect()].
 #' @return A `DBI` connection. Close it with [perf_disconnect()].
 #' @export
-perf_connect <- function(scale = c("sample", "full"), ...) {
+perf_connect <- function(scale = c("sample", "full"), version = "v2", ...) {
   scale <- match.arg(scale)
   if (!requireNamespace("fakehospdata", quietly = TRUE)) {
     stop("Install fakehospdata to open the dataset: remotes::install_github('ThomUK/synthetic-hospital-data', subdir = 'fakehospdata')", call. = FALSE)
   }
-  fakehospdata::fh_connect(scale, ...)
+  fakehospdata::fh_connect(scale, version = version, ...)
 }
 
 #' @rdname perf_connect

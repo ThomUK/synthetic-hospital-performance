@@ -40,6 +40,9 @@ sample_dir_con <- function(dir) {
 }
 
 sample_window <- as.Date(c("2023-04-01", "2026-03-31"))
+# The data version the sample the tests see corresponds to; definitions that
+# need a later version are skipped by the integration tests.
+sample_version <- Sys.getenv("FHPERF_SAMPLE_VERSION", unset = "v2")
 
 # Write a throwaway catalogue to a temp directory. `indicators` and
 # `components` are lists of lists; `sql` is a named character vector of

@@ -1,0 +1,8 @@
+id: apc_012
+title: Discharges with no pathway recorded
+description: "The number of live inpatient discharges in the period with no discharge pathway recorded, or one recorded in a form that cannot be read. Deaths and day cases are excluded. Needs data version v3 or later."
+type: count
+unit: discharges
+grain: month
+improvement_direction: neutral
+since: v3

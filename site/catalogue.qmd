@@ -10,11 +10,15 @@ it <- indicator_table(cat)
 ct <- component_table(cat)
 it <- it[order(match(it$domain, domain_codes(cat)), it$id), ]
 ct <- ct[order(match(ct$domain, domain_codes(cat)), ct$id), ]
+built_ids <- c(names(built$indicators), names(built$components))
 # A component that is also an indicator (a count) is shown on the indicator's page.
 page_of <- function(id) ifelse(id %in% it$id, sprintf("indicators/%s.qmd", id), sprintf("components/%s.qmd", id))
 definition_link <- function(id) sprintf('<small><a href="yaml.html#yaml-%s">definition</a></small>', id)
-indicator_link <- function(id) sprintf("[`%s`](indicators/%s.qmd) %s", id, id, definition_link(id))
-component_link <- function(id) ifelse(is.na(id), "", sprintf("[`%s`](%s)", id, page_of(id)))
+awaiting_note <- function(id) ifelse(is.na(it$since[match(id, it$id)]), "", sprintf("<small>from %s</small>", it$since[match(id, it$id)]))
+indicator_link <- function(id) ifelse(id %in% built_ids,
+  sprintf("[`%s`](indicators/%s.qmd) %s", id, id, definition_link(id)),
+  sprintf("`%s` %s %s", id, definition_link(id), awaiting_note(id)))
+component_link <- function(id) ifelse(is.na(id), "", ifelse(id %in% built_ids, sprintf("[`%s`](%s)", id, page_of(id)), sprintf("`%s`", id)))
 component_title <- function(id) ifelse(is.na(id), "", vapply(id, function(i) if (is.na(i)) "" else get_component(cat, i)$title, character(1)))
 ```
 
@@ -60,8 +64,10 @@ for (i in seq_len(nrow(ct))) {
   uses <- strsplit(ct$used_by[i], ", ", fixed = TRUE)[[1]]
   uses <- sub("^([a-z]+_[0-9]{3}) \\((.*)\\)$", '<a href="indicators/\\1.html"><code>\\1</code></a> (\\2)', uses)
   cat(sprintf(
-    '<tr id="%s"><td><a href="%s"><code>%s</code></a> %s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><code>%s</code></td><td>%s</td><td>%s</td></tr>\n',
-    ct$id[i], sub("\\.qmd$", ".html", page_of(ct$id[i])), ct$id[i], definition_link(ct$id[i]), ct$title[i], ct$domain_title[i], ct$aggregate[i],
+    '<tr id="%s"><td>%s %s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><code>%s</code></td><td>%s</td><td>%s</td></tr>\n',
+    ct$id[i],
+    if (ct$id[i] %in% built_ids) sprintf('<a href="%s"><code>%s</code></a>', sub("\\.qmd$", ".html", page_of(ct$id[i])), ct$id[i]) else sprintf('<code>%s</code> <small>from %s</small>', ct$id[i], ct$since[i]),
+    definition_link(ct$id[i]), ct$title[i], ct$domain_title[i], ct$aggregate[i],
     ifelse(is.na(ct$unit[i]), "", ct$unit[i]), ifelse(is.na(ct$source[i]), "", ct$source[i]), ct$dimensions[i], paste(uses, collapse = "<br>")
   ))
 }

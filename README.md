@@ -20,6 +20,10 @@ chart. Nothing in the data is real.
   components carry. `build_breakdowns()` computes every group, folds small
   ones into "Other", and `breakdown_summary()` gives the plot-the-dots
   summary table; the groups always add up to the whole.
+- A definition can run ahead of the published data: `since: v3` on a
+  component or indicator says which dataset version first has what it
+  reads. The site builds what its data version allows and lists the rest as
+  awaiting data; `available_indicators()` makes the same choice in code.
 - Every id is `<domain>_<nnn>`. The domain (`ed`, `apc`, `op`, `rtt`,
   `diag`, listed in `inst/domains.yaml`) names the subject matter expert
   group that owns the definition, and indicators and components share one
@@ -103,6 +107,8 @@ cd site && quarto render        # needs fhperf installed and the sample cached
 
 The `pages` workflow renders and deploys it to GitHub Pages on every push
 to `main`. The repository's Pages source must be set to GitHub Actions.
+`FHPERF_DATA_VERSION` (default `v2`) chooses the dataset version the site
+is built from; raise it when a new version is published.
 
 ## Development
 

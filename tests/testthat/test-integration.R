@@ -3,7 +3,7 @@
 test_that("every component in the catalogue runs against the sample", {
   con <- local_sample_con()
   cat <- read_catalogue()
-  for (id in component_ids(cat)) {
+  for (id in available_components(cat, sample_version)) {
     ev <- read_component_events(con, cat, id, window = sample_window)
     expect_gt(nrow(ev), 0, label = paste("rows of", id))
     expect_s3_class(ev$event_date, "Date")
@@ -14,8 +14,9 @@ test_that("every component in the catalogue runs against the sample", {
 test_that("every indicator builds a complete monthly series from the sample", {
   con <- local_sample_con()
   cat <- read_catalogue()
-  res <- build_indicators(con, cat, window = sample_window)
-  expect_named(res, indicator_ids(cat))
+  ids <- available_indicators(cat, sample_version)
+  res <- build_indicators(con, cat, ids = ids, window = sample_window)
+  expect_named(res, ids)
   for (id in names(res)) {
     x <- res[[id]]
     expect_equal(nrow(x), 36, info = id)

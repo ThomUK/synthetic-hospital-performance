@@ -41,4 +41,19 @@ for (dom in unique(tab$domain)) {
 }
 ```
 
-Built `r format(built$built_at, "%Y-%m-%d %H:%M %Z")`.
+```{r awaiting}
+#| results: asis
+aw <- built$awaiting
+if (length(aw) > 0) {
+  cat("\n## Awaiting data\n\n")
+  cat("These indicators are defined in the catalogue but need a later data version than the **", built$data_version,
+      "** set this site was built from. Their definitions are on the [Definitions](yaml.qmd) page.\n\n", sep = "")
+  rows <- built$table[built$table$id %in% aw, ]
+  out <- data.frame(Id = sprintf("`%s`", rows$id), Indicator = rows$title, Domain = rows$domain_title,
+                    Type = rows$type, `From version` = rows$since, check.names = FALSE)
+  print(knitr::kable(out, row.names = FALSE))
+  cat("\n")
+}
+```
+
+Built `r format(built$built_at, "%Y-%m-%d %H:%M %Z")` from data version `r built$data_version`.

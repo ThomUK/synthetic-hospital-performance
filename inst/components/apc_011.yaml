@@ -1,0 +1,8 @@
+id: apc_011
+title: Discharges on pathway P3
+description: "Live inpatient discharges that left on discharge pathway 3: a new long-term care home placement."
+source: derived.spells
+aggregate: count
+unit: discharges
+dimensions: [site, specialty]
+since: v3
